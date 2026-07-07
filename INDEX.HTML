@@ -379,11 +379,11 @@ footer{background:var(--slate-900);color:#fff;padding:48px 0 24px}
 
 <!-- BOTTOM NAVIGATION (mobile) -->
 <nav class="bottom-nav" id="bottom-nav">
-<a href="#topics" onclick="navTo('topics')"><span class="bn-icon">📚</span>Temas</a>
-<a href="#simulations" onclick="navTo('simulations')"><span class="bn-icon">🧪</span>Sims</a>
-<a href="#labs" onclick="navTo('labs')"><span class="bn-icon">🔬</span>Labs</a>
-<a href="#videos" onclick="navTo('videos')"><span class="bn-icon">🎬</span>Videos</a>
-<a href="#periodic" onclick="navTo('periodic')"><span class="bn-icon">⚛️</span>Tabla</a>
+<a href="#topics" onclick="navTo(this,'topics')"><span class="bn-icon">📚</span>Temas</a>
+<a href="#simulations" onclick="navTo(this,'simulations')"><span class="bn-icon">🧪</span>Sims</a>
+<a href="#labs" onclick="navTo(this,'labs')"><span class="bn-icon">🔬</span>Labs</a>
+<a href="#videos" onclick="navTo(this,'videos')"><span class="bn-icon">🎬</span>Videos</a>
+<a href="#periodic" onclick="navTo(this,'periodic')"><span class="bn-icon">⚛️</span>Tabla</a>
 </nav>
 
 <header class="hero">
@@ -563,9 +563,9 @@ document.getElementById('menu-btn').textContent='☰';
 }
 
 // ── BOTTOM NAV ACTIVE STATE ──
-function navTo(id){
+function navTo(el,id){
 document.querySelectorAll('.bottom-nav a').forEach(a=>a.classList.remove('active'));
-event.currentTarget.classList.add('active');
+el.classList.add('active');
 closeMobile();
 }
 // Intersection observer for bottom nav highlighting
@@ -765,13 +765,20 @@ document.getElementById('topic-modal-content').innerHTML=`
 </div>
 <h4 style="font-size:.85rem;font-weight:700;margin-bottom:10px;color:var(--slate-400);text-transform:uppercase;letter-spacing:.05em">Lecciones Disponibles</h4>
 <div style="display:grid;gap:8px">
-${t.lessons.map(l=>`
-<div onclick="openLesson('${l.replace(/'/g,"\\\\'")}','${t.title.replace(/'/g,"\\\\'")}','${t.color}')" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius-xs);cursor:pointer;transition:all .15s;min-height:52px;-webkit-tap-highlight-color:transparent" ontouchstart="this.style.background='var(--slate-50)'" ontouchend="this.style.background='#fff'" onmouseover="this.style.borderColor='${t.color}'" onmouseout="this.style.borderColor='var(--slate-200)'">
+${t.lessons.map((l,i)=>`
+<div class="lesson-link" data-lesson="${i}" data-topic="${id}" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius-xs);cursor:pointer;transition:all .15s;min-height:52px;-webkit-tap-highlight-color:transparent">
 <span style="font-weight:600;font-size:.9rem;color:var(--slate-700)">${l}</span>
 <span style="color:${t.color};font-size:1.2rem">▶</span>
 </div>`).join('')}
 </div>
 </div>`;
+document.querySelectorAll('.lesson-link').forEach(el=>{
+el.addEventListener('click',function(){
+const ti=DATA.topics.find(x=>x.id===this.dataset.topic);
+const lessonTitle=ti.lessons[+this.dataset.lesson];
+openLesson(lessonTitle,ti.title,ti.color);
+});
+});
 openModal('topic-modal');
 }
 
@@ -981,7 +988,14 @@ openModal('sim-modal')}
 
 // ── VIDEOS ──
 function renderVideos(){
-document.getElementById('videos-grid').innerHTML=DATA.videos.map(v=>`<div class="video-card" onclick="openVideo('${v.youtubeId}','${v.title.replace(/'/g,"\\\\'")}')" ><div class="video-thumb"><img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="video-play"><div class="video-play-btn">▶</div></div><div class="video-dur">${v.duration}</div></div><div class="video-info"><span class="vi-tag">${v.category}</span><h3>${v.title}</h3><p>${v.description}</p></div></div>`).join('')}
+document.getElementById('videos-grid').innerHTML=DATA.videos.map((v,i)=>`<div class="video-card" data-vidx="${i}"><div class="video-thumb"><img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="video-play"><div class="video-play-btn">▶</div></div><div class="video-dur">${v.duration}</div></div><div class="video-info"><span class="vi-tag">${v.category}</span><h3>${v.title}</h3><p>${v.description}</p></div></div>`).join('');
+document.querySelectorAll('.video-card').forEach(el=>{
+el.addEventListener('click',function(){
+const v=DATA.videos[+this.dataset.vidx];
+openVideo(v.youtubeId,v.title);
+});
+});
+}
 
 function openVideo(id,title){
 document.getElementById('video-modal-content').innerHTML=`<div class="modal-header"><h2>${title}</h2><button class="modal-close" onclick="closeVideo()">✕</button></div><div class="modal-body"><div class="vm-iframe"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1" allow="autoplay;encrypted-media" allowfullscreen playsinline></iframe></div></div>`;
