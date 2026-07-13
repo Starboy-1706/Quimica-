@@ -230,6 +230,192 @@ simEngines['sim-dilucion']=function(c){let M1=12,M2=.5,V2=500;function render(){
 simEngines['sim-coligativas']=function(c){let m=1,i=1,mol=.5,T=298.15;const Kb=.512,Kf=1.86,R=.0821;function render(){const dTb=Kb*m*i,dTf=Kf*m*i,pi=mol*R*T*i;c.innerHTML=`<div class="sim-grid"><div class="sim-controls"><h4>⚙️ Parámetros</h4><div class="control-group"><label>Molalidad: <span>${m.toFixed(2)}</span></label><input type="range" min=".01" max="5" step=".01" value="${m}" onchange="simCol.m=+this.value;simCol.render()" oninput="this.parentNode.querySelector('span').textContent=(+this.value).toFixed(2)"></div><div class="control-group"><label>Factor i: <span>${i}</span></label><input type="range" min="1" max="5" step="1" value="${i}" onchange="simCol.i=+this.value;simCol.render()" oninput="this.parentNode.querySelector('span').textContent=this.value"></div><div class="control-group"><label>Molaridad: <span>${mol.toFixed(2)} M</span></label><input type="range" min=".01" max="2" step=".01" value="${mol}" onchange="simCol.mol=+this.value;simCol.render()" oninput="this.parentNode.querySelector('span').textContent=(+this.value).toFixed(2)+' M'"></div><div class="control-group"><label>T: <span>${T.toFixed(0)} K</span></label><input type="range" min="273" max="373" step="1" value="${T}" onchange="simCol.T=+this.value;simCol.render()" oninput="this.parentNode.querySelector('span').textContent=this.value+' K'"></div></div><div><div class="results-grid"><div class="result-box"><div class="rb-label">ΔTb</div><div class="rb-value" style="color:#ef4444">+${dTb.toFixed(3)}°C</div></div><div class="result-box"><div class="rb-label">ΔTf</div><div class="rb-value" style="color:var(--blue)">-${dTf.toFixed(3)}°C</div></div><div class="result-box"><div class="rb-label">T ebu.</div><div class="rb-value" style="color:var(--amber)">${(100+dTb).toFixed(2)}°C</div></div><div class="result-box"><div class="rb-label">T cong.</div><div class="rb-value" style="color:var(--cyan)">${(0-dTf).toFixed(2)}°C</div></div></div><div class="big-result" style="background:var(--purple)"><div class="br-label">π osmótica</div><div class="br-value">${pi.toFixed(2)} atm</div></div></div></div>`}window.simCol={m,i,mol,T,render(){m=this.m;i=this.i;mol=this.mol;T=this.T;render()}};render()};
 simEngines['sim-config']=function(c){let z=11;function getConfig(Z){const order=['1s','2s','2p','3s','3p','4s','3d','4p','5s','4d','5p','6s','4f','5d','6p','7s','5f','6d','7p'];const maxE={s:2,p:6,d:10,f:14};let rem=Z;const res=[];for(const orb of order){if(rem<=0)break;const t=orb[orb.length-1],mx=maxE[t],e=Math.min(rem,mx);const sup='⁰¹²³⁴⁵⁶⁷⁸⁹';res.push(orb+String(e).split('').map(c=>sup[+c]).join(''));rem-=e}return res.join(' ')}function render(){c.innerHTML=`<div class="sim-grid"><div class="sim-controls"><h4>⚙️ Elemento</h4><div class="control-group"><label>Z: <span>${z}</span></label><input type="range" min="1" max="36" step="1" value="${z}" onchange="simCfg.z=+this.value;simCfg.render()" oninput="this.parentNode.querySelector('span').textContent=this.value"></div><div style="text-align:center;background:#fff;padding:16px;border-radius:var(--radius-sm);border:1px solid var(--slate-200);margin-top:8px"><div style="font-size:2.5rem;font-weight:900;color:var(--slate-900)">${z}</div><div style="font-size:.75rem;color:var(--slate-400)">Z = número atómico</div></div></div><div><div style="background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);padding:16px;border-radius:var(--radius-sm);margin-bottom:12px"><h4 style="font-size:.82rem;font-weight:700;color:#9a3412;margin-bottom:6px">Configuración</h4><p style="font-family:monospace;font-weight:700;color:#7c2d12;font-size:.95rem;word-break:break-all">${getConfig(z)}</p></div><div class="sim-info"><div>ℹ️</div><p><strong>Aufbau + Pauli + Hund</strong></p></div></div></div>`}window.simCfg={z,render(){z=this.z;render()}};render()};
 simEngines['sim-nox']=function(c){const compounds=[{f:'H₂O',els:[{s:'H',n:1,c:2},{s:'O',n:-2,c:1}]},{f:'H₂SO₄',els:[{s:'H',n:1,c:2},{s:'S',n:6,c:1},{s:'O',n:-2,c:4}]},{f:'NaCl',els:[{s:'Na',n:1,c:1},{s:'Cl',n:-1,c:1}]},{f:'KMnO₄',els:[{s:'K',n:1,c:1},{s:'Mn',n:7,c:1},{s:'O',n:-2,c:4}]},{f:'Fe₂O₃',els:[{s:'Fe',n:3,c:2},{s:'O',n:-2,c:3}]}];let idx=0;function render(){const cp=compounds[idx],sum=cp.els.reduce((a,e)=>a+e.n*e.c,0);c.innerHTML=`<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">${compounds.map((comp,i)=>`<button onclick="simNox.idx=${i};simNox.render()" style="padding:9px 14px;border-radius:var(--radius-sm);font-weight:700;font-size:.82rem;cursor:pointer;border:none;min-height:40px;${i===idx?'background:var(--indigo);color:#fff':'background:var(--slate-100);color:var(--slate-600)'}">${comp.f}</button>`).join('')}</div><div style="background:var(--slate-50);border:1px solid var(--slate-200);border-radius:var(--radius);padding:20px;text-align:center"><h4 style="font-size:1.3rem;font-weight:900;margin-bottom:16px">${cp.f}</h4><div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">${cp.els.map(e=>`<div style="background:#fff;border:1px solid var(--slate-200);border-radius:var(--radius-sm);padding:12px 16px;text-align:center;min-width:70px;box-shadow:var(--shadow)"><div style="font-size:1.3rem;font-weight:900">${e.s}</div><div style="font-size:1rem;font-weight:700;margin-top:4px;color:${e.n>=0?'var(--blue)':'#ef4444'}">${e.n>0?'+':''}${e.n}</div><div style="font-size:.6rem;color:var(--slate-400);margin-top:2px">×${e.c}</div></div>`).join('')}</div><div style="font-size:.8rem;color:var(--slate-500)">Σ = <strong style="color:var(--teal)">${sum}</strong> ${sum===0?'✅':''}</div></div>`}window.simNox={idx,render(){idx=this.idx;render()}};render()};
+
+simEngines['sim-disol']=function(c){
+let masa=4,vol=250,pm=40,feq=1,dens=1.02;
+function render(){
+const errs=[];
+if(vol<=0)errs.push('El volumen no puede ser 0.');
+if(pm<=0)errs.push('El peso molecular debe ser mayor a 0.');
+if(feq<=0)errs.push('El factor de equivalencia debe ser mayor a 0.');
+if(dens<=0)errs.push('La densidad debe ser mayor a 0.');
+const volL=vol/1000;
+const moles=pm>0?masa/pm:0;
+const M=volL>0?moles/volL:0;
+const pe=pm>0&&feq>0?pm/feq:0;
+const neq=pe>0?masa/pe:0;
+const N=volL>0?neq/volL:0;
+const masaSol=(dens*vol)-masa;
+const masaSolKg=masaSol/1000;
+const m=masaSolKg>0?moles/masaSolKg:0;
+const hasErr=errs.length>0;
+
+const step=(title,formula,substitution,result,unit,color)=>`
+<div style="background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:14px;margin-bottom:12px">
+<h4 style="font-size:.88rem;font-weight:700;color:${color};margin-bottom:8px">${title}</h4>
+<div style="background:var(--slate-50);padding:10px;border-radius:6px;margin-bottom:8px;font-family:monospace;font-size:.82rem;color:var(--slate-600)">${formula}</div>
+<div style="font-size:.82rem;color:var(--slate-700);margin-bottom:6px"><strong>Sustituyendo:</strong> ${substitution}</div>
+<div style="display:inline-block;padding:8px 16px;background:${color};color:#fff;border-radius:8px;font-weight:900;font-size:1.1rem">${hasErr?'—':result.toFixed(3)} ${unit}</div>
+</div>`;
+
+c.innerHTML=`<div class="sim-grid">
+<div class="sim-controls">
+<h4 style="display:flex;align-items:center;gap:8px">🧫 Datos de Entrada</h4>
+<div class="control-group"><label>Masa del soluto (g): <span>${masa}</span></label><input type="range" min="0.1" max="100" step="0.1" value="${masa}" oninput="simDisol.masa=+this.value;this.parentNode.querySelector('span').textContent=this.value;simDisol.render()"></div>
+<div class="control-group"><label>Volumen solución (mL): <span>${vol}</span></label><input type="range" min="0" max="2000" step="5" value="${vol}" oninput="simDisol.vol=+this.value;this.parentNode.querySelector('span').textContent=this.value;simDisol.render()"></div>
+<div class="control-group"><label>Peso Molecular (g/mol): <span>${pm}</span></label><input type="range" min="1" max="500" step="0.1" value="${pm}" oninput="simDisol.pm=+this.value;this.parentNode.querySelector('span').textContent=this.value;simDisol.render()"></div>
+<div class="control-group"><label>Factor equiv. (H⁺/OH⁻): <span>${feq}</span></label><input type="range" min="1" max="5" step="1" value="${feq}" oninput="simDisol.feq=+this.value;this.parentNode.querySelector('span').textContent=this.value;simDisol.render()"></div>
+<div class="control-group"><label>Densidad (g/mL): <span>${dens}</span></label><input type="range" min="0.5" max="2" step="0.01" value="${dens}" oninput="simDisol.dens=+this.value;this.parentNode.querySelector('span').textContent=this.value;simDisol.render()"></div>
+<div style="margin-top:12px;padding:10px;background:var(--slate-50);border-radius:8px">
+<div style="font-size:.7rem;font-weight:700;color:var(--slate-400);text-transform:uppercase;margin-bottom:4px">Valores intermedios</div>
+<div style="font-size:.8rem;color:var(--slate-600)">Moles = ${moles.toFixed(4)} mol</div>
+<div style="font-size:.8rem;color:var(--slate-600)">PE = ${pe.toFixed(2)} g/eq</div>
+<div style="font-size:.8rem;color:var(--slate-600)">Masa solvente = ${masaSol.toFixed(2)} g</div>
+</div>
+</div>
+<div>
+${hasErr?`<div style="background:#fef2f2;border:1px solid #fecaca;color:#991b1b;padding:14px;border-radius:10px;margin-bottom:16px;font-size:.85rem;font-weight:600">⚠️ ${errs.join(' ')}</div>`:''}
+
+<div class="results-grid" style="margin-bottom:16px;margin-top:0">
+<div class="result-box"><div class="rb-label">Molaridad (M)</div><div class="rb-value" style="color:var(--teal)">${hasErr?'—':M.toFixed(3)}</div></div>
+<div class="result-box"><div class="rb-label">Normalidad (N)</div><div class="rb-value" style="color:var(--purple)">${hasErr?'—':N.toFixed(3)}</div></div>
+</div>
+<div class="result-box" style="margin-bottom:20px"><div class="rb-label">Molalidad (m)</div><div class="rb-value" style="color:var(--blue)">${hasErr?'—':m.toFixed(3)} mol/kg</div></div>
+
+<h4 style="font-weight:800;font-size:.95rem;margin-bottom:12px;display:flex;align-items:center;gap:8px">📋 Procedimiento Paso a Paso</h4>
+
+${step('Paso 1 — Molaridad (M)',
+'M = moles / V(L) = (masa / PM) / V(L)',
+`M = (${masa} / ${pm}) / ${volL.toFixed(4)} = ${moles.toFixed(4)} / ${volL.toFixed(4)}`,
+M,'M','var(--teal)')}
+
+${step('Paso 2 — Normalidad (N)',
+'N = nº equiv. / V(L) = (masa / PE) / V(L), donde PE = PM / factor',
+`PE = ${pm} / ${feq} = ${pe.toFixed(2)} → N = (${masa} / ${pe.toFixed(2)}) / ${volL.toFixed(4)} = ${neq.toFixed(4)} / ${volL.toFixed(4)}`,
+N,'N','var(--purple)')}
+
+${step('Paso 3 — Molalidad (m)',
+'m = moles / kg solvente, donde masa solvente = (dens × vol) − masa soluto',
+`Solvente = (${dens} × ${vol}) − ${masa} = ${masaSol.toFixed(2)} g = ${masaSolKg.toFixed(4)} kg → m = ${moles.toFixed(4)} / ${masaSolKg.toFixed(4)}`,
+m,'mol/kg','var(--blue)')}
+
+<div class="sim-info"><div>ℹ️</div><p>Resultados con 3 decimales de precisión. Basado en las fórmulas de la Práctica 5 de Química General.</p></div>
+</div></div>`;
+}
+window.simDisol={masa,vol,pm,feq,dens,render(){masa=this.masa;vol=this.vol;pm=this.pm;feq=this.feq;dens=this.dens;render()}};render()};
+
+simEngines['sim-valor']=function(c){
+let mode=0;
+let va=25,ca=0.1,vb=0,cb=0;
+let vbLeche=1.5;
+let vbDur=12,nbDur=0.01,vMuestra=100;
+
+function inp(id,label,val,min,max,step,unit){
+return `<div class="control-group"><label>${label}: <span>${val} ${unit}</span></label><input type="range" min="${min}" max="${max}" step="${step}" value="${val}" oninput="simValor.set('${id}',+this.value);this.parentNode.querySelector('span').textContent=this.value+' ${unit}'"></div>`;
+}
+
+function stepBox(title,formula,subs,result,unit,color){
+return `<div style="background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:14px;margin-bottom:12px">
+<h4 style="font-size:.88rem;font-weight:700;color:${color};margin-bottom:8px">${title}</h4>
+<div style="background:var(--slate-50);padding:10px;border-radius:6px;margin-bottom:8px;font-family:monospace;font-size:.82rem;color:var(--slate-600)">${formula}</div>
+<div style="font-size:.82rem;color:var(--slate-700);margin-bottom:6px"><strong>Sustituyendo:</strong> ${subs}</div>
+<div style="display:inline-block;padding:8px 16px;background:${color};color:#fff;border-radius:8px;font-weight:900;font-size:1.1rem">${result} ${unit}</div></div>`;
+}
+
+function render(){
+const tabs=['⚖️ Punto Equivalencia','🥛 Acidez Leche','💧 Dureza Agua'];
+let content='';
+
+if(mode===0){
+if(vb>0&&cb>0){ca=(vb*cb)/va;} else if(va>0&&ca>0){vb=(va*ca)/cb||0;}
+const veq=cb>0?(va*ca)/cb:0;
+content=inp('va','Va (ácido)',va,1,100,0.5,'mL')+inp('ca','Ca (ácido)',ca,0.001,2,0.001,'M')+inp('cb','Cb (base)',cb,0.001,2,0.001,'M')+
+`<div style="margin-top:16px">
+${stepBox('Punto de Equivalencia','Va × Ca = Vb × Cb → Vb = (Va × Ca) / Cb',
+`Vb = (${va} × ${ca.toFixed(3)}) / ${cb.toFixed(3)}`,
+cb>0?veq.toFixed(3):'—','mL','var(--purple)')}
+<div class="sim-info"><div>ℹ️</div><p>En el punto de equivalencia, los moles de ácido igualan los moles de base. El indicador cambia de color en este punto.</p></div></div>`;
+}
+else if(mode===1){
+const dornic=vbLeche*10;
+const tipo=dornic<15?'Leche fresca':dornic<=18?'Leche aceptable':'Leche ácida (no apta)';
+const color=dornic<15?'var(--emerald)':dornic<=18?'var(--amber)':'var(--rose)';
+content=inp('vbLeche','Vb NaOH gastado',vbLeche,0,5,0.1,'mL')+
+`<div style="margin-top:16px">
+${stepBox('Acidez de Leche (Grados Dornic)','°D = Vb × 10',
+`°D = ${vbLeche} × 10`,dornic.toFixed(1),'°D',color)}
+<div style="background:${color}22;border:1px solid ${color}44;padding:14px;border-radius:10px;margin-bottom:12px">
+<div style="font-weight:700;color:${color};font-size:.9rem">${tipo}</div>
+<div style="font-size:.78rem;color:var(--slate-600);margin-top:4px">Rango normal: 14-18 °D. Valores superiores indican acidificación por bacterias lácticas.</div></div>
+<div class="sim-info"><div>ℹ️</div><p>La acidez Dornic mide el ácido láctico en leche. Se titula con NaOH 0.1N usando fenolftaleína como indicador.</p></div></div>`;
+}
+else if(mode===2){
+const ppm=vMuestra>0?(vbDur*nbDur*50000)/vMuestra:0;
+const tipo=ppm<75?'Agua blanda':ppm<=150?'Agua moderada':ppm<=300?'Agua dura':'Agua muy dura';
+const color=ppm<75?'var(--teal)':ppm<=150?'var(--amber)':ppm<=300?'var(--orange)':'var(--rose)';
+content=inp('vbDur','Vb EDTA gastado',vbDur,0,50,0.5,'mL')+inp('nbDur','Nb EDTA',nbDur,0.001,0.1,0.001,'N')+inp('vMuestra','V muestra agua',vMuestra,10,500,5,'mL')+
+`<div style="margin-top:16px">
+${stepBox('Dureza del Agua','ppm CaCO₃ = (Vb × Nb × 50000) / V muestra',
+`ppm = (${vbDur} × ${nbDur} × 50000) / ${vMuestra}`,vMuestra>0?ppm.toFixed(3):'—','ppm',color)}
+<div style="background:${color}22;border:1px solid ${color}44;padding:14px;border-radius:10px;margin-bottom:12px">
+<div style="font-weight:700;color:${color};font-size:.9rem">${tipo} (${ppm.toFixed(1)} ppm)</div>
+<div style="font-size:.78rem;color:var(--slate-600);margin-top:4px">Clasificación: Blanda &lt;75 · Moderada 75-150 · Dura 150-300 · Muy dura &gt;300 ppm</div></div>
+<div class="sim-info"><div>ℹ️</div><p>La dureza mide la concentración de Ca²⁺ y Mg²⁺ disueltos. Se determina por titulación con EDTA usando Negro de Eriocromo T.</p></div></div>`;
+}
+
+c.innerHTML=`<div style="display:flex;gap:4px;margin-bottom:16px;overflow-x:auto;scrollbar-width:none">${tabs.map((t,i)=>`<button onclick="simValor.mode=${i};simValor.render()" style="padding:10px 14px;border-radius:var(--radius-xs);font-weight:700;font-size:.8rem;cursor:pointer;border:none;white-space:nowrap;min-height:44px;${i===mode?'background:var(--rose);color:#fff':'background:var(--slate-100);color:var(--slate-600)'}">${t}</button>`).join('')}</div>${content}`;
+}
+window.simValor={mode,va,ca,vb,cb,vbLeche,vbDur,nbDur,vMuestra,set(k,v){this[k]=v;this.render()},render(){mode=this.mode;va=this.va;ca=this.ca;vb=this.vb;cb=this.cb;vbLeche=this.vbLeche;vbDur=this.vbDur;nbDur=this.nbDur;vMuestra=this.vMuestra;render()}};render()};
+
+simEngines['sim-glosario']=function(c){
+const terms=[
+{term:'Ácido (Arrhenius)',def:'Sustancia que en solución acuosa libera iones H⁺ (protones). Ejemplo: HCl → H⁺ + Cl⁻.',cat:'Conceptos'},
+{term:'Base (Arrhenius)',def:'Sustancia que en solución acuosa libera iones OH⁻ (hidróxido). Ejemplo: NaOH → Na⁺ + OH⁻.',cat:'Conceptos'},
+{term:'Ácido (Brønsted-Lowry)',def:'Especie que dona un protón (H⁺) a otra especie. Es una definición más amplia que la de Arrhenius.',cat:'Conceptos'},
+{term:'Base (Brønsted-Lowry)',def:'Especie que acepta un protón (H⁺) de otra especie.',cat:'Conceptos'},
+{term:'pH',def:'Medida de la acidez o basicidad de una solución. pH = −log[H⁺]. Escala de 0 (muy ácido) a 14 (muy básico). pH 7 = neutro.',cat:'Medición'},
+{term:'pOH',def:'Medida complementaria al pH. pOH = −log[OH⁻]. Relación: pH + pOH = 14 a 25°C.',cat:'Medición'},
+{term:'Valoración (Titulación)',def:'Técnica analítica que determina la concentración de un analito haciendo reaccionar un volumen conocido con un reactivo de concentración conocida (titulante).',cat:'Técnicas'},
+{term:'Punto de Equivalencia',def:'Momento en la titulación donde los moles de ácido igualan exactamente los moles de base. Va × Ca = Vb × Cb.',cat:'Técnicas'},
+{term:'Indicador',def:'Sustancia que cambia de color según el pH del medio. Fenolftaleína: incolora en ácido, rosa en base. Naranja de metilo: rojo en ácido, amarillo en base.',cat:'Técnicas'},
+{term:'Molaridad (M)',def:'Concentración expresada como moles de soluto por litro de solución. M = n/V(L).',cat:'Concentración'},
+{term:'Normalidad (N)',def:'Concentración expresada como número de equivalentes por litro de solución. N = M × factor de equivalencia.',cat:'Concentración'},
+{term:'Molalidad (m)',def:'Concentración expresada como moles de soluto por kilogramo de solvente puro. m = n/kg solvente.',cat:'Concentración'},
+{term:'Peso Equivalente (PE)',def:'Masa molecular dividida entre el número de H⁺ o OH⁻ que la sustancia puede intercambiar. PE = PM / factor.',cat:'Concentración'},
+{term:'Grados Dornic (°D)',def:'Unidad de medida de la acidez de la leche. °D = Vb(NaOH) × 10. Leche fresca: 14-18 °D.',cat:'Aplicaciones'},
+{term:'Dureza del Agua',def:'Concentración de iones Ca²⁺ y Mg²⁺ expresada en ppm de CaCO₃. Se determina por titulación con EDTA.',cat:'Aplicaciones'},
+{term:'EDTA',def:'Ácido etilendiaminotetraacético. Agente quelante que forma complejos estables con cationes metálicos divalentes. Se usa para medir dureza del agua.',cat:'Reactivos'},
+{term:'Fenolftaleína',def:'Indicador ácido-base. Incolora a pH < 8.2, rosa/magenta a pH > 10. Se usa en titulaciones con bases fuertes.',cat:'Reactivos'},
+{term:'Negro de Eriocromo T',def:'Indicador metalocrómico. Vira de rojo vino (con Ca²⁺/Mg²⁺) a azul (libre) en presencia de EDTA. Se usa para determinar dureza del agua.',cat:'Reactivos'}
+];
+
+let filter='Todos';
+const cats=['Todos',...[...new Set(terms.map(t=>t.cat))]];
+
+function render(){
+const filtered=filter==='Todos'?terms:terms.filter(t=>t.cat===filter);
+c.innerHTML=`
+<div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px">${cats.map(cat=>`<button onclick="simGlos.filter='${cat}';simGlos.render()" style="padding:8px 14px;border-radius:var(--radius-xs);font-weight:600;font-size:.78rem;cursor:pointer;border:none;white-space:nowrap;min-height:38px;${filter===cat?'background:var(--slate-800);color:#fff':'background:var(--slate-100);color:var(--slate-600)'}">${cat}</button>`).join('')}</div>
+<div style="display:grid;gap:10px">${filtered.map(t=>`
+<div style="background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:14px">
+<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+<h4 style="font-size:.9rem;font-weight:800;color:var(--slate-900);margin-bottom:4px">${t.term}</h4>
+<span style="font-size:.6rem;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--slate-100);color:var(--slate-500);white-space:nowrap">${t.cat}</span>
+</div>
+<p style="font-size:.82rem;color:var(--slate-600);line-height:1.6">${t.def}</p>
+</div>`).join('')}</div>
+<div style="margin-top:20px;padding:16px;background:linear-gradient(135deg,rgba(20,184,166,.05),rgba(6,182,212,.05));border:1px solid rgba(20,184,166,.15);border-radius:12px">
+<h4 style="font-weight:700;font-size:.9rem;color:var(--teal-d);margin-bottom:8px">🔬 ¿Por qué son importantes estas pruebas?</h4>
+<ul style="list-style:disc;padding-left:20px;font-size:.82rem;color:var(--slate-600);line-height:1.8">
+<li><strong>Control de calidad alimentaria:</strong> La acidez Dornic determina si la leche es apta para consumo humano.</li>
+<li><strong>Tratamiento de aguas:</strong> La dureza afecta tuberías, electrodomésticos y procesos industriales.</li>
+<li><strong>Análisis farmacéutico:</strong> Las valoraciones verifican la pureza y concentración de principios activos.</li>
+<li><strong>Investigación ambiental:</strong> El pH y la composición iónica son indicadores de contaminación.</li>
+</ul>
+</div>`;
+}
+window.simGlos={filter,render(){filter=this.filter;render()}};render()};
+
 function openSim(id){const sim=C.simulations.find(s=>s.id===id);if(!sim)return;document.getElementById('sim-modal-content').innerHTML=`<div class="modal-header"><h2>${sim.icon} ${sim.title}</h2><button class="modal-close" onclick="closeModal('sim-modal')">✕</button></div>`;const bd=document.createElement('div');bd.className='modal-body';document.getElementById('sim-modal-content').appendChild(bd);if(simEngines[id])simEngines[id](bd);else bd.innerHTML='<p style="text-align:center;padding:40px;color:var(--slate-400)">En desarrollo...</p>';openModal('sim-modal')}
 
 function renderVideos(){document.getElementById('videos-grid').innerHTML=C.videos.map((v,i)=>`<div class="video-card" data-vidx="${i}"><div class="video-thumb"><img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="video-play"><div class="video-play-btn">▶</div></div><div class="video-dur">${v.duration}</div></div><div class="video-info"><span class="vi-tag">${v.category}</span><h3>${v.title}</h3><p>${v.description}</p></div></div>`).join('');document.querySelectorAll('.video-card').forEach(el=>{el.addEventListener('click',function(){const v=C.videos[+this.dataset.vidx];openVideo(v.youtubeId,v.title)})})}
