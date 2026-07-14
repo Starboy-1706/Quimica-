@@ -214,5 +214,24 @@ const CONFIG = {
     { label: 'Videos', href: '#videos', icon: '🎬' },
     { label: 'Tabla Periódica', href: '#periodic', icon: '⚛️' }
   ],
+  customSims: [
+    {
+      id: 'custom-ejemplo',
+      title: 'Calculadora de Densidad',
+      icon: '⚖️',
+      desc: 'Calcula densidad, masa o volumen.',
+      tag: 'Ejemplo',
+      color: 'var(--orange)',
+      inputs: [
+        { label: 'Masa', key: 'masa', unit: 'g', min: 0.1, max: 1000, step: 0.1, default: 100 },
+        { label: 'Volumen', key: 'vol', unit: 'mL', min: 0.1, max: 1000, step: 0.1, default: 50 }
+      ],
+      outputs: [
+        { label: 'Densidad', formula: 'masa / vol', unit: 'g/mL', color: 'var(--teal)', decimals: 4 },
+        { label: 'Masa (si dens=1)', formula: '1 * vol', unit: 'g', color: 'var(--blue)', decimals: 2 }
+      ],
+      info: 'ρ = m / V. La densidad del agua es aproximadamente 1 g/mL a 25°C.'
+    }
+  ],
   admin: { password: 'quimicau2024' }
 };

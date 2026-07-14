@@ -48,7 +48,15 @@ footer{background:var(--slate-900);color:#fff;padding:48px 0 24px}@media(min-wid
 .feedback-fab{position:fixed;bottom:calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);right:16px;z-index:90;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--indigo));color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(99,102,241,.4);display:flex;align-items:center;justify-content:center;font-size:1.4rem;transition:all .2s}@media(min-width:768px){.feedback-fab{bottom:24px;right:24px}}.feedback-fab:active{transform:scale(.95)}.feedback-panel{position:fixed;bottom:calc(var(--bottom-nav-h) + var(--safe-bottom) + 80px);right:16px;z-index:89;width:calc(100% - 32px);max-width:320px;background:#fff;border-radius:var(--radius);box-shadow:0 10px 40px rgba(0,0,0,.15);display:none;animation:feedbackIn .25s}@media(min-width:768px){.feedback-panel{bottom:90px;right:24px}}@keyframes feedbackIn{from{opacity:0;transform:translateY(10px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}.feedback-panel.open{display:block}.feedback-panel-header{padding:16px;border-bottom:1px solid var(--slate-200);display:flex;align-items:center;justify-content:space-between}.feedback-panel-header h3{font-size:.95rem;font-weight:700;color:var(--slate-800);margin:0}.feedback-type{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}.feedback-type button{padding:10px;border-radius:var(--radius-xs);border:1px solid var(--slate-200);background:#fff;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--slate-600)}.feedback-type button.active{background:var(--indigo);color:#fff;border-color:var(--indigo)}.feedback-textarea{width:100%;padding:12px;border:1px solid var(--slate-200);border-radius:var(--radius-xs);font-size:.85rem;resize:none;min-height:80px;margin-bottom:12px;font-family:inherit}.feedback-textarea:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.1)}.feedback-submit{width:100%;padding:12px;background:var(--indigo);color:#fff;border:none;border-radius:var(--radius-xs);font-weight:700;font-size:.85rem;cursor:pointer}
 .skip-link{position:absolute;top:-100px;left:16px;background:var(--slate-900);color:#fff;padding:12px 20px;border-radius:var(--radius-xs);z-index:1000;font-weight:700;font-size:.85rem;transition:top .2s}.skip-link:focus{top:16px}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}:focus-visible{outline:3px solid var(--teal);outline-offset:2px}:focus:not(:focus-visible){outline:none}@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 @media(max-width:767px){[style*="grid-template-columns:1fr 1fr"]{grid-template-columns:1fr!important}}
-.admin-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);overflow-y:auto;padding:20px}.admin-overlay.open{display:block}.admin-panel{background:#fff;border-radius:var(--radius);max-width:900px;margin:0 auto;overflow:hidden;animation:slideUp .3s}.admin-header{background:var(--slate-900);color:#fff;padding:20px 24px;display:flex;align-items:center;justify-content:space-between}.admin-header h2{font-size:1.1rem;font-weight:800;margin:0}.admin-tabs{display:flex;gap:4px;padding:12px 24px;background:var(--slate-100);overflow-x:auto;scrollbar-width:none}.admin-tabs::-webkit-scrollbar{display:none}.admin-tab{padding:8px 16px;border-radius:var(--radius-xs);font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:#fff;color:var(--slate-600)}.admin-tab.active{background:var(--teal);color:#fff}.admin-body{padding:24px}.admin-field{margin-bottom:20px}.admin-field label{display:block;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--slate-400);margin-bottom:6px}.admin-field input,.admin-field textarea{width:100%;padding:10px 14px;border:1px solid var(--slate-200);border-radius:var(--radius-xs);font-size:.9rem;font-family:monospace}.admin-field textarea{min-height:200px;resize:vertical}.admin-actions{padding:16px 24px;border-top:1px solid var(--slate-200);display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap}.admin-actions button{padding:10px 20px;border-radius:var(--radius-xs);font-weight:700;font-size:.85rem;cursor:pointer;border:none}.admin-hint{font-size:.72rem;color:var(--slate-400);padding:16px 24px;border-top:1px solid var(--slate-100);background:var(--slate-50)}
+.admin-overlay{display:none;position:fixed;inset:0;z-index:9999;background:rgba(15,23,42,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);overflow-y:auto;padding:8px}@media(min-width:768px){.admin-overlay{padding:20px}}.admin-overlay.open{display:block}.admin-panel{background:#fff;border-radius:var(--radius);max-width:960px;margin:0 auto;overflow:hidden;animation:slideUp .3s;display:flex;flex-direction:column;max-height:calc(100dvh - 16px)}@media(min-width:768px){.admin-panel{max-height:calc(100dvh - 40px)}}.admin-head{background:linear-gradient(135deg,var(--slate-900),#1e1b4b);color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}.admin-head h2{font-size:1rem;font-weight:800;margin:0;display:flex;align-items:center;gap:8px}.admin-head .av{font-size:.65rem;padding:3px 8px;background:rgba(255,255,255,.15);border-radius:999px}.admin-tabs{display:flex;gap:3px;padding:10px 16px;background:var(--slate-100);overflow-x:auto;scrollbar-width:none;flex-shrink:0;border-bottom:1px solid var(--slate-200)}.admin-tabs::-webkit-scrollbar{display:none}.admin-tab{padding:8px 14px;border-radius:var(--radius-xs);font-size:.75rem;font-weight:600;cursor:pointer;white-space:nowrap;border:none;background:#fff;color:var(--slate-500);transition:all .15s}.admin-tab.active{background:var(--teal);color:#fff;box-shadow:0 2px 8px rgba(20,184,166,.3)}.admin-tab:hover:not(.active){background:var(--slate-200)}.admin-body{padding:16px;overflow-y:auto;flex:1}@media(min-width:768px){.admin-body{padding:20px}}.admin-foot{padding:12px 16px;border-top:1px solid var(--slate-200);display:flex;gap:8px;justify-content:space-between;align-items:center;flex-wrap:wrap;background:var(--slate-50);flex-shrink:0}@media(min-width:768px){.admin-foot{padding:14px 20px}}.admin-foot button{padding:10px 18px;border-radius:var(--radius-xs);font-weight:700;font-size:.82rem;cursor:pointer;border:none;transition:all .15s}.admin-foot button:active{transform:scale(.97)}
+.ae{margin-bottom:16px}.ae>label{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--slate-400);margin-bottom:5px}.ae input,.ae textarea,.ae select{width:100%;padding:10px 12px;border:1px solid var(--slate-200);border-radius:8px;font-size:.88rem;color:var(--slate-800);background:#fff;font-family:inherit;transition:border-color .15s}.ae input:focus,.ae textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(20,184,166,.08)}.ae textarea{resize:vertical;min-height:70px}.ae-row{display:grid;gap:10px}@media(min-width:500px){.ae-2{grid-template-columns:1fr 1fr}.ae-3{grid-template-columns:1fr 1fr 1fr}.ae-icon{grid-template-columns:56px 1fr}}
+.acard{background:#fff;border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:12px;position:relative;transition:border-color .15s}.acard:hover{border-color:var(--slate-300)}.acard-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--slate-100)}.acard-head h4{font-weight:700;font-size:.9rem;display:flex;align-items:center;gap:6px;margin:0}.acard-num{width:24px;height:24px;border-radius:6px;background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;flex-shrink:0}
+.adel{background:#fef2f2;color:#ef4444;border:1px solid #fecaca;padding:6px 12px;border-radius:6px;font-size:.72rem;font-weight:700;cursor:pointer;transition:all .15s;white-space:nowrap}.adel:hover{background:#ef4444;color:#fff;border-color:#ef4444}
+.aadd{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:14px;border:2px dashed var(--slate-300);border-radius:12px;color:var(--slate-400);font-weight:700;font-size:.85rem;cursor:pointer;transition:all .15s;background:transparent;margin-top:8px}.aadd:hover{border-color:var(--teal);color:var(--teal);background:rgba(20,184,166,.03)}
+.ainfo{padding:12px;background:rgba(20,184,166,.04);border:1px solid rgba(20,184,166,.12);border-radius:8px;font-size:.78rem;color:var(--slate-600);line-height:1.6;margin-bottom:16px;display:flex;gap:8px;align-items:flex-start}.ainfo b{color:var(--teal)}
+.asub{background:var(--slate-50);border:1px solid var(--slate-200);border-radius:8px;padding:12px;margin-bottom:8px}
+.asub-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.asub-head span{font-weight:600;font-size:.8rem;color:var(--slate-600)}
+.atoast{position:fixed;top:20px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-weight:700;font-size:.85rem;z-index:99999;animation:slideDown .3s;box-shadow:0 10px 30px rgba(0,0,0,.3);color:#fff}
 </style>
 </head>
 <body>
@@ -67,15 +75,20 @@ footer{background:var(--slate-900);color:#fff;padding:48px 0 24px}@media(min-wid
 
 <div class="admin-overlay" id="admin-overlay">
 <div class="admin-panel">
-<div class="admin-header"><h2>⚙️ Panel de Administración</h2><button class="modal-close" onclick="closeAdmin()" style="background:rgba(255,255,255,.2);color:#fff">✕</button></div>
+<div class="admin-head">
+<h2>⚙️ Panel de Administración <span class="av">v2</span></h2>
+<button class="modal-close" onclick="closeAdmin()" style="background:rgba(255,255,255,.15);color:#fff">✕</button>
+</div>
 <div class="admin-tabs" id="admin-tabs"></div>
 <div class="admin-body" id="admin-body"></div>
-<div class="admin-actions">
-<button onclick="applyAdminChanges()" style="background:var(--teal);color:#fff">✅ Aplicar Cambios</button>
+<div class="admin-foot">
+<div style="font-size:.7rem;color:var(--slate-400)">Ctrl+Shift+Q · Los números se calculan solos</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button onclick="applyAdminChanges()" style="background:var(--teal);color:#fff">✅ Aplicar</button>
 <button onclick="downloadConfig()" style="background:var(--indigo);color:#fff">📥 Descargar config.js</button>
 <button onclick="closeAdmin()" style="background:var(--slate-200);color:var(--slate-700)">Cerrar</button>
 </div>
-<div class="admin-hint">💡 <strong>Ctrl+Shift+Q</strong> abre/cierra este panel. Las estadísticas del hero se calculan solas. Descarga el config.js y reemplázalo en tu carpeta para guardar los cambios.</div>
+</div>
 </div></div>
 
 
@@ -98,9 +111,10 @@ C.faqs.forEach((f,i)=>{f.id='faq-'+i});
 function autoStats(){
 let totalLessons=0;
 C.topics.forEach(t=>{totalLessons+=t.lessons.length});
+const totalSims=C.simulations.length+(C.customSims||[]).length;
 C.hero.stats=[
 {icon:'📚',text:C.topics.length+' Temas'},
-{icon:'🧪',text:C.simulations.length+' Sims'},
+{icon:'🧪',text:totalSims+' Sims'},
 {icon:'🔬',text:C.labs.length+' Labs'},
 {icon:'🎬',text:C.videos.length+' Videos'},
 {icon:'📝',text:totalLessons+' Lecciones'}
@@ -221,7 +235,9 @@ function renderLabs(){document.getElementById('labs-grid').innerHTML=C.labs.map(
 function openLab(id){const lab=C.labs.find(x=>x.id===id);const g=C.labGuides[id]||{safety:['Sin datos'],materials:['Sin datos'],procedure:[],obs:'',questions:[]};
 document.getElementById('lab-modal-content').innerHTML=`<div class="modal-header colored" style="background:${lab.color}"><h2>${lab.title}</h2><button class="modal-close" onclick="closeModal('lab-modal')">✕</button></div><div class="modal-body"><div class="lab-section"><h3>🛡️ Seguridad</h3><ul class="safety-box">${g.safety.map(s=>`<li><span>⚠️</span> ${s}</li>`).join('')}</ul></div><div class="lab-section"><h3>📦 Materiales</h3><div class="mat-grid">${g.materials.map(m=>`<div class="mat-item"><span>🔹</span> ${m}</div>`).join('')}</div></div><div class="lab-section"><h3>📋 Procedimiento</h3>${g.procedure.map(p=>`<div class="proc-step"><div class="proc-num" style="background:${lab.color}">${p.n}</div><p>${p.p}</p></div>`).join('')}</div><div class="lab-section"><h3>📝 Observaciones</h3><div class="obs-box">${g.obs||'Anotar cambios observados.'}</div></div><div class="lab-section"><h3>❓ Cuestionario</h3>${g.questions.map((q,i)=>`<div class="question-item"><span>${i+1}.</span><p>${q}</p></div>`).join('')}</div></div>`;openModal('lab-modal')}
 
-function renderSimulations(){document.getElementById('simulations-grid').innerHTML=C.simulations.map(s=>`<div class="card" onclick="openSim('${s.id}')"><div class="card-body"><div class="card-icon">${s.icon}</div><h3 class="card-title">${s.title}</h3><p class="card-desc">${s.desc}</p><div class="card-meta"><span class="meta-right">${s.tag}</span></div></div></div>`).join('')}
+function renderSimulations(){
+const all=[...C.simulations,...(C.customSims||[])];
+document.getElementById('simulations-grid').innerHTML=all.map(s=>`<div class="card" onclick="openSim('${s.id}')"><div class="card-body"><div class="card-icon">${s.icon}</div><h3 class="card-title">${s.title}</h3><p class="card-desc">${s.desc}</p><div class="card-meta"><span class="meta-right">${s.tag}</span></div></div></div>`).join('')}
 const simEngines={};
 simEngines['sim-ph']=function(c){let val=7,sub='Agua pura';const list=[{v:1,s:'Ácido batería'},{v:2.5,s:'Jugo limón'},{v:3,s:'Vinagre'},{v:5.5,s:'Café'},{v:6.5,s:'Leche'},{v:7,s:'Agua destilada'},{v:7.4,s:'Sangre'},{v:8.5,s:'Bicarbonato'},{v:10.5,s:'Leche magnesia'},{v:12.5,s:'Blanqueador'}];function render(){let col='var(--teal)';if(val<6.5)col='#ef4444';if(val>7.5)col='var(--blue)';c.innerHTML=`<div class="sim-grid"><div class="sim-controls"><h4>⚙️ Sustancia</h4><div class="control-group"><label>pH: <span>${val}</span></label><input type="range" min="0" max="14" step="0.1" value="${val}" oninput="simPH.update(+this.value)"></div><div style="display:grid;gap:6px">${list.map(i=>`<button onclick="simPH.update(${i.v},'${i.s}')" style="padding:10px 12px;font-size:.78rem;border:1px solid var(--slate-200);border-radius:6px;text-align:left;cursor:pointer;min-height:42px;${sub===i.s?'background:var(--slate-200);font-weight:700':''}">${i.s} (${i.v})</button>`).join('')}</div></div><div><h4>🧪 pH</h4><div class="ph-display"><div class="ph-num" style="color:${col}">${val.toFixed(1)}</div><div class="ph-label">${val<7?'ÁCIDO':val>7?'BÁSICO':'NEUTRO'} — ${sub}</div><div class="ph-bar"><div class="ph-marker" style="left:${(val/14)*100}%"></div></div><div class="ph-labels"><span>0</span><span>7</span><span>14</span></div></div><div class="sim-info"><div>ℹ️</div><p><strong>pH = -log[H⁺]</strong></p></div></div></div>`}window.simPH={update:(v,s)=>{val=v;sub=s||'Desconocida';render()}};render()};
 simEngines['sim-tit']=function(c){let Ca=.1,Va=50,Cb=.1,Vb=0;function render(){const Veq=(Ca*Va)/Cb,pH=Vb<Veq?(Vb===0?-Math.log10(Ca):-Math.log10((Ca*Va-Cb*Vb)/(Va+Vb))):Vb===Veq?7:(14+Math.log10((Cb*Vb-Ca*Va)/(Va+Vb)));const pts=[];for(let i=0;i<=Veq*2;i+=.5){const p=i<Veq?(i===0?-Math.log10(Ca):-Math.log10((Ca*Va-Cb*i)/(Va+i))):i===Veq?7:(14+Math.log10((Cb*i-Ca*Va)/(Va+i)));pts.push({x:i,y:p})}const pathD="M"+pts.map(p=>`${40+(p.x/(Veq*2))*340},${10+(1-p.y/14)*210}`).join(" L");c.innerHTML=`<div class="sim-grid"><div class="sim-controls"><h4>🧪 Titulación</h4><div class="control-group"><label>C ácido: <span>${Ca.toFixed(3)} M</span></label><input type="range" min=".01" max="1" step=".01" value="${Ca}" onchange="simTit.Ca=+this.value;simTit.render()" oninput="this.parentNode.querySelector('span').textContent=(+this.value).toFixed(3)+' M'"></div><div class="control-group"><label>V ácido: <span>${Va} mL</span></label><input type="range" min="10" max="100" step="5" value="${Va}" onchange="simTit.Va=+this.value;simTit.render()" oninput="this.parentNode.querySelector('span').textContent=this.value+' mL'"></div><div class="control-group"><label>C base: <span>${Cb.toFixed(3)} M</span></label><input type="range" min=".01" max="1" step=".01" value="${Cb}" onchange="simTit.Cb=+this.value;simTit.render()" oninput="this.parentNode.querySelector('span').textContent=(+this.value).toFixed(3)+' M'"></div><hr style="border:none;border-top:1px solid var(--slate-200);margin:10px 0"><div class="control-group"><label>V base: <span style="color:var(--purple)">${Vb.toFixed(1)} mL</span></label><input type="range" min="0" max="${Math.round(Veq*2)}" step=".5" value="${Vb}" onchange="simTit.Vb=+this.value;simTit.render()" oninput="this.parentNode.querySelector('span').textContent=(+this.value).toFixed(1)+' mL'"></div><div class="results-grid"><div class="result-box"><div class="rb-label">V equiv.</div><div class="rb-value" style="color:var(--purple)">${Veq.toFixed(1)} mL</div></div><div class="result-box"><div class="rb-label">pH</div><div class="rb-value" style="color:${pH<7?'#ef4444':'var(--blue)'}">${pH.toFixed(2)}</div></div></div></div><div><div class="curve-box"><h4>📈 Curva</h4><svg viewBox="0 0 400 240" style="width:100%"><rect x="40" y="10" width="340" height="210" fill="var(--slate-50)" stroke="var(--slate-200)" rx="4"/>${[0,2,4,6,7,8,10,12,14].map(p=>`<line x1="40" y1="${10+(1-p/14)*210}" x2="380" y2="${10+(1-p/14)*210}" stroke="${p===7?'var(--teal)':'var(--slate-200)'}" stroke-width="${p===7?1.5:.5}" ${p===7?'stroke-dasharray="4,4"':''}/><text x="36" y="${14+(1-p/14)*210}" text-anchor="end" style="font-size:9px;fill:var(--slate-400)">${p}</text>`).join('')}<path d="${pathD}" fill="none" stroke="var(--purple)" stroke-width="2.5"/><circle cx="${40+(Vb/(Veq*2))*340}" cy="${10+(1-pH/14)*210}" r="5" fill="#ef4444" stroke="white" stroke-width="2"/></svg></div><div class="sim-info"><div>ℹ️</div><p><strong>Ca×Va = Cb×Vb</strong></p></div></div></div>`}window.simTit={Ca,Va,Cb,Vb,render(){Ca=this.Ca;Va=this.Va;Cb=this.Cb;Vb=this.Vb;render()}};render()};
@@ -416,7 +432,49 @@ c.innerHTML=`
 }
 window.simGlos={filter,render(){filter=this.filter;render()}};render()};
 
-function openSim(id){const sim=C.simulations.find(s=>s.id===id);if(!sim)return;document.getElementById('sim-modal-content').innerHTML=`<div class="modal-header"><h2>${sim.icon} ${sim.title}</h2><button class="modal-close" onclick="closeModal('sim-modal')">✕</button></div>`;const bd=document.createElement('div');bd.className='modal-body';document.getElementById('sim-modal-content').appendChild(bd);if(simEngines[id])simEngines[id](bd);else bd.innerHTML='<p style="text-align:center;padding:40px;color:var(--slate-400)">En desarrollo...</p>';openModal('sim-modal')}
+function buildCustomSim(cfg,container){
+const state={};
+cfg.inputs.forEach(inp=>{state[inp.key]=inp.default||0});
+function calc(formula){
+try{const fn=new Function(...Object.keys(state),'return '+formula);const r=fn(...Object.values(state));return isFinite(r)?r:0}catch(e){return 0}
+}
+function render(){
+container.innerHTML=`<div class="sim-grid"><div class="sim-controls"><h4>⚙️ Parámetros</h4>
+${cfg.inputs.map(inp=>`<div class="control-group"><label>${inp.label}: <span>${state[inp.key]} ${inp.unit}</span></label>
+<input type="range" min="${inp.min}" max="${inp.max}" step="${inp.step}" value="${state[inp.key]}" oninput="window._csim.set('${inp.key}',+this.value);this.parentNode.querySelector('span').textContent=this.value+' ${inp.unit}'"></div>`).join('')}
+</div><div>
+<div class="results-grid" style="margin-top:0;margin-bottom:16px">${cfg.outputs.map(out=>{
+const val=calc(out.formula);
+return `<div class="result-box"><div class="rb-label">${out.label}</div><div class="rb-value" style="color:${out.color||'var(--teal)'}">${val.toFixed(out.decimals||3)} ${out.unit}</div></div>`}).join('')}</div>
+<h4 style="font-weight:800;font-size:.9rem;margin-bottom:12px">📋 Procedimiento</h4>
+${cfg.outputs.map(out=>{
+const val=calc(out.formula);
+const subs=out.formula.replace(/([a-zA-Z_]+)/g,(m)=>state[m]!==undefined?state[m]:m);
+return `<div style="background:#fff;border:1px solid var(--slate-200);border-radius:10px;padding:14px;margin-bottom:10px">
+<h4 style="font-size:.85rem;font-weight:700;color:${out.color||'var(--teal)'};margin-bottom:6px">${out.label}</h4>
+<div style="background:var(--slate-50);padding:8px 12px;border-radius:6px;font-family:monospace;font-size:.82rem;color:var(--slate-600);margin-bottom:6px">${out.formula}</div>
+<div style="font-size:.82rem;color:var(--slate-700);margin-bottom:4px"><strong>Sustituyendo:</strong> ${subs}</div>
+<div style="display:inline-block;padding:6px 14px;background:${out.color||'var(--teal)'};color:#fff;border-radius:6px;font-weight:900;font-size:1rem">${val.toFixed(out.decimals||3)} ${out.unit}</div></div>`}).join('')}
+${cfg.info?`<div class="sim-info"><div>ℹ️</div><p>${cfg.info}</p></div>`:''}
+</div></div>`;
+}
+window._csim={set(k,v){state[k]=v;render()}};
+render();
+}
+
+function openSim(id){
+const sim=C.simulations.find(s=>s.id===id);
+const csim=(C.customSims||[]).find(s=>s.id===id);
+const target=sim||csim;
+if(!target)return;
+document.getElementById('sim-modal-content').innerHTML=`<div class="modal-header"><h2>${target.icon} ${target.title}</h2><button class="modal-close" onclick="closeModal('sim-modal')">✕</button></div>`;
+const bd=document.createElement('div');bd.className='modal-body';
+document.getElementById('sim-modal-content').appendChild(bd);
+if(simEngines[id])simEngines[id](bd);
+else if(csim)buildCustomSim(csim,bd);
+else bd.innerHTML='<p style="text-align:center;padding:40px;color:var(--slate-400)">En desarrollo...</p>';
+openModal('sim-modal');
+}
 
 function renderVideos(){document.getElementById('videos-grid').innerHTML=C.videos.map((v,i)=>`<div class="video-card" data-vidx="${i}"><div class="video-thumb"><img src="https://img.youtube.com/vi/${v.youtubeId}/mqdefault.jpg" alt="${v.title}" loading="lazy"><div class="video-play"><div class="video-play-btn">▶</div></div><div class="video-dur">${v.duration}</div></div><div class="video-info"><span class="vi-tag">${v.category}</span><h3>${v.title}</h3><p>${v.description}</p></div></div>`).join('');document.querySelectorAll('.video-card').forEach(el=>{el.addEventListener('click',function(){const v=C.videos[+this.dataset.vidx];openVideo(v.youtubeId,v.title)})})}
 function openVideo(id,title){document.getElementById('video-modal-content').innerHTML=`<div class="modal-header"><h2>${title}</h2><button class="modal-close" onclick="closeVideo()">✕</button></div><div class="modal-body"><div class="vm-iframe"><iframe src="https://www.youtube.com/embed/${id}?autoplay=1&playsinline=1" allow="autoplay;encrypted-media" allowfullscreen playsinline></iframe></div></div>`;openModal('video-modal')}
@@ -441,16 +499,21 @@ document.addEventListener('touchstart',e=>{touchStartY=e.touches[0].clientY},{pa
 document.addEventListener('touchend',e=>{if(e.changedTouches[0].clientY-touchStartY>120){const o=document.querySelector('.modal-overlay.open');if(o){if(o.id==='video-modal')closeVideo();else closeModal(o.id)}}},{passive:true});
 
 const adminTabs=[
-{key:'site',label:'🏠 Sitio'},
-{key:'hero',label:'🎯 Hero'},
+{key:'site',label:'🏠 General'},
+{key:'hero',label:'🎯 Portada'},
 {key:'topics',label:'📚 Temas'},
 {key:'lessons',label:'📖 Lecciones'},
 {key:'quizzes',label:'📝 Quizzes'},
-{key:'labs',label:'🔬 Labs'},
+{key:'labs',label:'🔬 Prácticas'},
 {key:'videos',label:'🎬 Videos'},
-{key:'faqs',label:'❓ FAQ'},
-{key:'nav',label:'🧭 Nav'},
-{key:'footer',label:'📄 Footer'},
+{key:'faqs',label:'❓ Preguntas'},
+{key:'sections',label:'🏷️ Secciones'},
+{key:'nav',label:'🧭 Menú'},
+{key:'footer',label:'📄 Pie'},
+{key:'heroCards',label:'🃏 Cards Hero'},
+{key:'heroCta',label:'🔘 Botones Hero'},
+{key:'customSims',label:'🧮 Crear Simulador'},
+{key:'password',label:'🔒 Contraseña'},
 {key:'raw',label:'🔧 Avanzado'}
 ];
 let activeTab=0,adminAuth=false;
@@ -468,155 +531,178 @@ function drawAdmin(){
 document.getElementById('admin-tabs').innerHTML=adminTabs.map((t,i)=>`<button class="admin-tab${i===activeTab?' active':''}" onclick="activeTab=${i};drawAdmin()">${t.label}</button>`).join('');
 const b=document.getElementById('admin-body');
 const k=adminTabs[activeTab].key;
-const R=(l,id,v,t)=>`<div class="admin-field"><label>${l}</label>${t==='textarea'?`<textarea id="${id}" rows="3">${v||''}</textarea>`:`<input id="${id}" value="${(v||'').toString().replace(/"/g,'&quot;')}">`}</div>`;
-const delBtn=(fn)=>`<button onclick="${fn}" style="background:#fef2f2;color:#ef4444;border:1px solid #fecaca;padding:6px 12px;border-radius:6px;font-size:.75rem;font-weight:700;cursor:pointer">🗑️ Eliminar</button>`;
+const F=(l,id,v,t,ph)=>`<div class="ae"><label>${l}</label>${t==='textarea'?`<textarea id="${id}" rows="3" placeholder="${ph||''}">${v!=null?v:''}</textarea>`:`<input id="${id}" value="${(v!=null?v:'').toString().replace(/"/g,'&quot;')}" placeholder="${ph||''}">`}</div>`;
+const D=(fn)=>`<button class="adel" onclick="if(confirm('¿Eliminar?')){${fn}}"">🗑️ Eliminar</button>`;
+const info=(text)=>`<div class="ainfo"><span>💡</span><span>${text}</span></div>`;
 
 if(k==='site'){
-b.innerHTML=[R('Nombre del sitio','as-name',C.site.name),R('Tagline','as-tag',C.site.tagline),R('Descripción','as-desc',C.site.description,'textarea'),R('URL','as-url',C.site.url),R('Google Analytics ID','as-ga',C.site.analyticsId),R('Año','as-year',C.site.year)].join('');
+b.innerHTML=info('<b>Datos generales</b> del sitio. El nombre aparece en el logo, la navegación y el footer.')+
+`<div class="ae-row ae-2">${F('Nombre del sitio','as-name',C.site.name,'','QuímicaU')}${F('Tagline','as-tag',C.site.tagline,'','Frase corta')}</div>`+
+F('Descripción SEO','as-desc',C.site.description,'textarea','Descripción que aparece en Google')+
+`<div class="ae-row ae-2">${F('URL del sitio','as-url',C.site.url,'','https://...')}${F('Google Analytics ID','as-ga',C.site.analyticsId,'','G-XXXXXXXXXX')}</div>`+
+F('Año','as-year',C.site.year,'','2024');
 }
 else if(k==='hero'){
-b.innerHTML=[R('Badge','ah-badge',C.hero.badge),R('Título (acepta HTML)','ah-title',C.hero.title,'textarea'),R('Subtítulo','ah-sub',C.hero.subtitle,'textarea')].join('')+
-`<div style="margin-top:16px;padding:14px;background:var(--slate-50);border-radius:10px;border:1px solid var(--slate-200)"><h4 style="font-weight:700;font-size:.85rem;margin-bottom:6px">📊 Estadísticas del Hero</h4><p style="font-size:.75rem;color:var(--slate-500)">Se calculan automáticamente: ${C.topics.length} Temas · ${C.simulations.length} Sims · ${C.labs.length} Labs · ${C.videos.length} Videos</p></div>`;
+b.innerHTML=info('<b>Portada principal.</b> Las estadísticas (Temas, Sims, Labs, Videos) se calculan automáticamente.')+
+F('Texto del badge','ah-badge',C.hero.badge,'','Actualizado 2024')+
+F('Título principal','ah-title',C.hero.title,'textarea','Acepta HTML. Usa &lt;span class="grad"&gt;texto&lt;/span&gt; para texto con gradiente')+
+F('Subtítulo','ah-sub',C.hero.subtitle,'textarea','Descripción breve debajo del título')+
+`<div style="margin-top:12px;padding:14px;background:linear-gradient(135deg,rgba(20,184,166,.05),rgba(99,102,241,.05));border:1px solid var(--slate-200);border-radius:10px"><h4 style="font-weight:700;font-size:.82rem;margin-bottom:4px">📊 Estadísticas (automáticas)</h4><p style="font-size:.78rem;color:var(--slate-500)">${C.topics.length} Temas · ${C.simulations.length} Simuladores · ${C.labs.length} Prácticas · ${C.videos.length} Videos · ${C.topics.reduce((a,t)=>a+t.lessons.length,0)} Lecciones</p></div>`;
+}
+else if(k==='heroCards'){
+b.innerHTML=info('<b>Tarjetas</b> que aparecen en la portada (solo en pantallas grandes). Máximo 4 recomendado.')+
+C.hero.cards.map((c,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${c.title}</h4>${D(`C.hero.cards.splice(${i},1);drawAdmin()`)}</div>
+<div class="ae-row ae-icon"><div class="ae"><label>Emoji</label><input id="ahc-ic-${i}" value="${c.icon}" style="text-align:center;font-size:1.3rem"></div><div class="ae"><label>Título</label><input id="ahc-ti-${i}" value="${c.title}"></div></div>
+${F('Descripción corta','ahc-de-'+i,c.desc,'','Texto breve')}</div>`).join('')+
+`<button class="aadd" onclick="C.hero.cards.push({icon:'📌',title:'Nuevo',desc:'Descripción'});drawAdmin()">+ Agregar tarjeta</button>`;
+}
+else if(k==='heroCta'){
+b.innerHTML=info('<b>Botones de acción</b> en la portada. "target" es el ID de la sección a la que lleva (topics, simulations, labs, videos, periodic).')+
+C.hero.cta.map((c,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${c.text}</h4>${D(`C.hero.cta.splice(${i},1);drawAdmin()`)}</div>
+<div class="ae-row ae-3">${F('Texto del botón','acta-tx-'+i,c.text,'','🚀 Explorar')}${F('Sección destino','acta-tg-'+i,c.target,'','topics')}
+<div class="ae"><label>Estilo</label><select id="acta-st-${i}" style="width:100%;padding:10px;border:1px solid var(--slate-200);border-radius:8px"><option value="primary" ${c.style==='primary'?'selected':''}>Primario (color)</option><option value="ghost" ${c.style==='ghost'?'selected':''}>Ghost (transparente)</option></select></div></div></div>`).join('')+
+`<button class="aadd" onclick="C.hero.cta.push({text:'Nuevo botón',target:'topics',style:'ghost'});drawAdmin()">+ Agregar botón</button>`;
 }
 else if(k==='topics'){
-b.innerHTML=C.topics.map((t,i)=>`
-<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:16px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<h4 style="font-weight:700;font-size:.95rem">${t.icon} ${t.title}</h4>
-${delBtn(`C.topics.splice(${i},1);drawAdmin()`)}
-</div>
-<div style="display:grid;grid-template-columns:60px 1fr;gap:8px;margin-bottom:8px">
-<input id="at-ic-${i}" value="${t.icon}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px;text-align:center;font-size:1.2rem" placeholder="Emoji">
-<input id="at-ti-${i}" value="${t.title}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Título">
-</div>
-<textarea id="at-de-${i}" rows="2" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px;font-size:.85rem" placeholder="Descripción">${t.desc}</textarea>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
-<input id="at-tg-${i}" value="${t.tag}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Etiqueta">
-<input id="at-co-${i}" value="${t.color}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Color CSS">
-</div>
-<label style="font-size:.7rem;font-weight:700;color:var(--slate-400);text-transform:uppercase;margin-bottom:4px;display:block">Lecciones (una por línea)</label>
-<textarea id="at-le-${i}" rows="3" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem">${t.lessons.join('\n')}</textarea>
-</div>`).join('')+
-`<button onclick="C.topics.push({id:'t'+(C.topics.length+1),title:'Nuevo Tema',icon:'📘',desc:'Descripción del tema',lessons:['Lección 1'],tag:'Nuevo',color:'var(--teal)'});drawAdmin()" style="padding:12px;background:var(--teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Agregar Tema</button>`;
+b.innerHTML=info('<b>Temas académicos.</b> Cada tema contiene lecciones. Los nombres de las lecciones deben coincidir exactamente con los de la pestaña "📖 Lecciones".')+
+C.topics.map((t,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${t.icon} ${t.title}</h4>${D(`C.topics.splice(${i},1);drawAdmin()`)}</div>
+<div class="ae-row ae-icon"><div class="ae"><label>Emoji</label><input id="at-ic-${i}" value="${t.icon}" style="text-align:center;font-size:1.3rem"></div><div class="ae"><label>Título del tema</label><input id="at-ti-${i}" value="${t.title}"></div></div>
+${F('Descripción','at-de-'+i,t.desc,'textarea','¿De qué trata este tema?')}
+<div class="ae-row ae-2">${F('Etiqueta','at-tg-'+i,t.tag,'','Ej: Fundamentos')}${F('Color','at-co-'+i,t.color,'','var(--teal)')}</div>
+${F('Lecciones (escribir una por línea)','at-le-'+i,t.lessons.join('\n'),'textarea','Lección 1\\nLección 2\\nLección 3')}</div>`).join('')+
+`<button class="aadd" onclick="C.topics.push({title:'Nuevo Tema',icon:'📘',desc:'Descripción',lessons:['Lección 1'],tag:'Nuevo',color:'var(--teal)'});drawAdmin()">+ Agregar tema</button>`;
 }
 else if(k==='lessons'){
 const keys=Object.keys(C.lessonContent);
-b.innerHTML=keys.map(key=>{
+b.innerHTML=info('<b>Contenido de cada lección.</b> Cada lección tiene secciones con título y texto. El nombre debe coincidir con el que pusiste en Temas. "_default" se usa cuando no hay contenido específico.')+
+keys.map(key=>{
 const secs=C.lessonContent[key];
-return `<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:16px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<h4 style="font-weight:700;font-size:.95rem">📖 ${key}</h4>
-${key!=='_default'?delBtn(`delete C.lessonContent['${key.replace(/'/g,"\\\\'")}'];drawAdmin()`):'<span style="font-size:.7rem;color:var(--slate-400)">predeterminado</span>'}
-</div>
-${secs.map((s,si)=>`<div style="background:var(--slate-50);padding:12px;border-radius:8px;margin-bottom:8px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px"><span style="font-weight:600;font-size:.8rem">${si+1}. ${s.t}</span>${delBtn(`C.lessonContent['${key.replace(/'/g,"\\\\'")}'].splice(${si},1);drawAdmin()`)}</div>
-<input data-lk="${key}" data-li="${si}" data-f="t" value="${s.t}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:6px" placeholder="Título sección">
-<textarea data-lk="${key}" data-li="${si}" data-f="c" rows="4" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem" placeholder="Contenido">${s.c}</textarea>
-</div>`).join('')}
-<button onclick="C.lessonContent['${key.replace(/'/g,"\\\\'")}'].push({t:'Nueva sección',c:'Contenido aquí'});drawAdmin()" style="padding:8px;background:var(--slate-100);border:1px dashed var(--slate-300);border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;width:100%">+ Agregar sección a ${key}</button>
-</div>`;
+return `<div class="acard"><div class="acard-head"><h4>📖 ${key}</h4>${key!=='_default'?D(`delete C.lessonContent['${key.replace(/'/g,"\\\\'")}'];drawAdmin()`):'<span style="font-size:.68rem;color:var(--slate-400);background:var(--slate-100);padding:3px 8px;border-radius:4px">predeterminado</span>'}</div>
+${secs.map((s,si)=>`<div class="asub"><div class="asub-head"><span><span class="acard-num" style="display:inline-flex;margin-right:6px">${si+1}</span>${s.t}</span>${D(`C.lessonContent['${key.replace(/'/g,"\\\\'")}'].splice(${si},1);drawAdmin()`)}</div>
+<input data-lk="${key}" data-li="${si}" data-f="t" value="${s.t}" placeholder="Título de la sección" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:6px;font-weight:600">
+<textarea data-lk="${key}" data-li="${si}" data-f="c" rows="5" placeholder="Escribe aquí el contenido. Usa **texto** para negritas." style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem">${s.c}</textarea></div>`).join('')}
+<button class="aadd" style="margin-top:4px;padding:10px;font-size:.78rem" onclick="C.lessonContent['${key.replace(/'/g,"\\\\'")}'].push({t:'Nueva sección',c:''});drawAdmin()">+ Agregar sección</button></div>`;
 }).join('')+
-`<div style="margin-top:12px"><input id="new-lesson-key" placeholder="Nombre de la lección (debe coincidir con el nombre en Temas)" style="width:100%;padding:10px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px"><button onclick="const v=document.getElementById('new-lesson-key').value.trim();if(v){C.lessonContent[v]=[{t:'Sección 1',c:'Contenido'}];drawAdmin()}" style="padding:10px;background:var(--teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Crear contenido para nueva lección</button></div>`;
+`<div class="acard" style="background:var(--slate-50)"><h4 style="font-weight:700;font-size:.85rem;margin-bottom:10px">➕ Crear contenido para nueva lección</h4>
+<input id="new-lesson-key" placeholder="Escribe el nombre exacto de la lección (como aparece en Temas)" style="width:100%;padding:10px;border:1px solid var(--slate-200);border-radius:8px;margin-bottom:8px">
+<button onclick="const v=document.getElementById('new-lesson-key').value.trim();if(!v){toast('Escribe un nombre');return}if(C.lessonContent[v]){toast('Ya existe');return}C.lessonContent[v]=[{t:'Sección 1',c:'Contenido aquí'}];drawAdmin();toast('✅ Lección creada')" style="padding:10px 20px;background:var(--teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Crear lección</button></div>`;
 }
 else if(k==='quizzes'){
 const keys=Object.keys(C.quizzes);
-b.innerHTML=keys.map(key=>{
+b.innerHTML=info('<b>Quizzes de autoevaluación.</b> Cada lección puede tener su propio quiz. La "respuesta correcta" es el número de la opción (empieza en 0). Ej: si la segunda opción es la correcta, escribe 1.')+
+keys.map(key=>{
 const qs=C.quizzes[key];
-return `<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:16px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<h4 style="font-weight:700;font-size:.95rem">📝 ${key}</h4>
-${key!=='_default'?delBtn(`delete C.quizzes['${key.replace(/'/g,"\\\\'")}'];drawAdmin()`):'<span style="font-size:.7rem;color:var(--slate-400)">predeterminado</span>'}
-</div>
-${qs.map((q,qi)=>`<div style="background:var(--slate-50);padding:12px;border-radius:8px;margin-bottom:10px">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:700;font-size:.82rem">Pregunta ${qi+1}</span>${delBtn(`C.quizzes['${key.replace(/'/g,"\\\\'")}'].splice(${qi},1);drawAdmin()`)}</div>
-<input data-qk="${key}" data-qi="${qi}" data-f="q" value="${q.q}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:6px" placeholder="Pregunta">
-<label style="font-size:.65rem;font-weight:700;color:var(--slate-400);display:block;margin-bottom:4px">OPCIONES (una por línea)</label>
-<textarea data-qk="${key}" data-qi="${qi}" data-f="opts" rows="4" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem;margin-bottom:6px">${q.opts.join('\n')}</textarea>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div><label style="font-size:.65rem;font-weight:700;color:var(--slate-400)">RESPUESTA CORRECTA (0,1,2...)</label><input data-qk="${key}" data-qi="${qi}" data-f="correct" type="number" min="0" value="${q.correct}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-top:4px"></div>
-<div><label style="font-size:.65rem;font-weight:700;color:var(--slate-400)">EXPLICACIÓN</label><input data-qk="${key}" data-qi="${qi}" data-f="exp" value="${q.exp}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-top:4px"></div>
-</div>
-</div>`).join('')}
-<button onclick="C.quizzes['${key.replace(/'/g,"\\\\'")}'].push({q:'Nueva pregunta',opts:['Opción A','Opción B','Opción C'],correct:0,exp:'Explicación'});drawAdmin()" style="padding:8px;background:var(--slate-100);border:1px dashed var(--slate-300);border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600;width:100%">+ Agregar pregunta</button>
-</div>`;
+return `<div class="acard"><div class="acard-head"><h4>📝 ${key}</h4>${key!=='_default'?D(`delete C.quizzes['${key.replace(/'/g,"\\\\'")}'];drawAdmin()`):'<span style="font-size:.68rem;color:var(--slate-400);background:var(--slate-100);padding:3px 8px;border-radius:4px">predeterminado</span>'}</div>
+${qs.map((q,qi)=>`<div class="asub"><div class="asub-head"><span><span class="acard-num" style="display:inline-flex;margin-right:6px">${qi+1}</span>Pregunta</span>${D(`C.quizzes['${key.replace(/'/g,"\\\\'")}'].splice(${qi},1);drawAdmin()`)}</div>
+<input data-qk="${key}" data-qi="${qi}" data-f="q" value="${q.q}" placeholder="Escribe la pregunta" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:6px;font-weight:600">
+<div class="ae"><label>Opciones de respuesta (una por línea)</label><textarea data-qk="${key}" data-qi="${qi}" data-f="opts" rows="4" style="font-size:.85rem" placeholder="Opción A\nOpción B\nOpción C\nOpción D">${q.opts.join('\n')}</textarea></div>
+<div class="ae-row ae-2">
+<div class="ae"><label>Nº respuesta correcta (0=${q.opts[0]||'A'}, 1=${q.opts[1]||'B'}...)</label><input data-qk="${key}" data-qi="${qi}" data-f="correct" type="number" min="0" value="${q.correct}"></div>
+<div class="ae"><label>Explicación (se muestra al responder)</label><input data-qk="${key}" data-qi="${qi}" data-f="exp" value="${q.exp}" placeholder="Por qué esa es la respuesta correcta"></div>
+</div></div>`).join('')}
+<button class="aadd" style="margin-top:4px;padding:10px;font-size:.78rem" onclick="C.quizzes['${key.replace(/'/g,"\\\\'")}'].push({q:'',opts:['Opción A','Opción B','Opción C','Opción D'],correct:0,exp:''});drawAdmin()">+ Agregar pregunta</button></div>`;
 }).join('')+
-`<div style="margin-top:12px"><input id="new-quiz-key" placeholder="Nombre de la lección para el quiz" style="width:100%;padding:10px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px"><button onclick="const v=document.getElementById('new-quiz-key').value.trim();if(v){C.quizzes[v]=[{q:'Pregunta 1',opts:['A','B','C'],correct:0,exp:'Explicación'}];drawAdmin()}" style="padding:10px;background:var(--indigo);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Crear quiz para nueva lección</button></div>`;
+`<div class="acard" style="background:var(--slate-50)"><h4 style="font-weight:700;font-size:.85rem;margin-bottom:10px">➕ Crear quiz para nueva lección</h4>
+<input id="new-quiz-key" placeholder="Nombre exacto de la lección" style="width:100%;padding:10px;border:1px solid var(--slate-200);border-radius:8px;margin-bottom:8px">
+<button onclick="const v=document.getElementById('new-quiz-key').value.trim();if(!v){toast('Escribe un nombre');return}if(C.quizzes[v]){toast('Ya existe');return}C.quizzes[v]=[{q:'Pregunta 1',opts:['A','B','C','D'],correct:0,exp:'Explicación'}];drawAdmin();toast('✅ Quiz creado')" style="padding:10px 20px;background:var(--indigo);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700">Crear quiz</button></div>`;
 }
 else if(k==='labs'){
-b.innerHTML=C.labs.map((l,i)=>`
-<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:16px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-<h4 style="font-weight:700;font-size:.95rem">${l.icon} ${l.title}</h4>
-${delBtn(`C.labs.splice(${i},1);delete C.labGuides['lab-'+${i}];drawAdmin()`)}
-</div>
-<div style="display:grid;grid-template-columns:60px 1fr;gap:8px;margin-bottom:8px">
-<input id="al-ic-${i}" value="${l.icon}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px;text-align:center;font-size:1.2rem">
-<input id="al-ti-${i}" value="${l.title}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px">
-</div>
-<textarea id="al-de-${i}" rows="2" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px;font-size:.85rem">${l.desc}</textarea>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<input id="al-tg-${i}" value="${l.tag}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Etiqueta">
-<input id="al-co-${i}" value="${l.color}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Color">
-</div>
-</div>`).join('')+
-`<button onclick="C.labs.push({title:'Nueva Práctica',icon:'🔬',tag:'Práctica',color:'var(--teal)',desc:'Descripción'});drawAdmin()" style="padding:12px;background:var(--amber);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Agregar Práctica</button>`;
+b.innerHTML=info('<b>Prácticas de laboratorio.</b> Cada práctica se muestra como tarjeta en la sección de Laboratorios.')+
+C.labs.map((l,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${l.icon} ${l.title}</h4>${D(`C.labs.splice(${i},1);drawAdmin()`)}</div>
+<div class="ae-row ae-icon"><div class="ae"><label>Emoji</label><input id="al-ic-${i}" value="${l.icon}" style="text-align:center;font-size:1.3rem"></div><div class="ae"><label>Título</label><input id="al-ti-${i}" value="${l.title}"></div></div>
+${F('Descripción','al-de-'+i,l.desc,'textarea','¿De qué trata esta práctica?')}
+<div class="ae-row ae-2">${F('Etiqueta','al-tg-'+i,l.tag,'','Práctica 1')}${F('Color','al-co-'+i,l.color,'','var(--teal)')}</div></div>`).join('')+
+`<button class="aadd" onclick="C.labs.push({title:'Nueva Práctica',icon:'🔬',tag:'Práctica',color:'var(--teal)',desc:''});drawAdmin()">+ Agregar práctica</button>`;
 }
 else if(k==='videos'){
-b.innerHTML=C.videos.map((v,i)=>`
-<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-<h4 style="font-weight:700;font-size:.85rem;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${v.title}</h4>
-${delBtn(`C.videos.splice(${i},1);drawAdmin()`)}
-</div>
-<input id="av-ti-${i}" value="${v.title}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px" placeholder="Título">
-<div style="display:grid;grid-template-columns:1fr 80px 100px;gap:8px;margin-bottom:8px">
-<input id="av-yt-${i}" value="${v.youtubeId}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="YouTube ID">
-<input id="av-du-${i}" value="${v.duration}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Duración">
-<input id="av-ca-${i}" value="${v.category}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Categoría">
-</div>
-<input id="av-de-${i}" value="${v.description}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Descripción">
-</div>`).join('')+
-`<button onclick="C.videos.push({title:'Nuevo Video',youtubeId:'',duration:'00:00',category:'General',description:''});drawAdmin()" style="padding:12px;background:var(--rose);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Agregar Video</button>`;
+b.innerHTML=info('<b>Videos de YouTube.</b> Copia el ID del video desde la URL (ej: en youtube.com/watch?v=<b>ABC123</b>, el ID es ABC123).')+
+C.videos.map((v,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${v.title.substring(0,40)}${v.title.length>40?'...':''}</h4>${D(`C.videos.splice(${i},1);drawAdmin()`)}</div>
+${F('Título del video','av-ti-'+i,v.title,'','Nombre descriptivo')}
+<div class="ae-row ae-3">${F('YouTube ID','av-yt-'+i,v.youtubeId,'','ABC123xyz')}${F('Duración','av-du-'+i,v.duration,'','12:45')}${F('Categoría','av-ca-'+i,v.category,'','Átomo')}</div>
+${F('Descripción','av-de-'+i,v.description,'textarea','Breve descripción del contenido')}</div>`).join('')+
+`<button class="aadd" onclick="C.videos.push({title:'',youtubeId:'',duration:'00:00',category:'General',description:''});drawAdmin()">+ Agregar video</button>`;
 }
 else if(k==='faqs'){
-b.innerHTML=C.faqs.map((f,i)=>`
-<div style="border:1px solid var(--slate-200);border-radius:12px;padding:16px;margin-bottom:12px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<span style="font-weight:700;font-size:.85rem">Pregunta ${i+1}</span>
-${delBtn(`C.faqs.splice(${i},1);drawAdmin()`)}
-</div>
-<input id="afq-q-${i}" value="${f.q}" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;margin-bottom:8px" placeholder="Pregunta">
-<textarea id="afq-a-${i}" rows="2" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem" placeholder="Respuesta">${f.a}</textarea>
-</div>`).join('')+
-`<button onclick="C.faqs.push({id:C.faqs.length+1,q:'Nueva pregunta',a:'Respuesta'});drawAdmin()" style="padding:12px;background:var(--amber);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:700;width:100%">+ Agregar FAQ</button>`;
+b.innerHTML=info('<b>Preguntas frecuentes.</b> Aparecen en la sección inferior de la página.')+
+C.faqs.map((f,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> Pregunta</h4>${D(`C.faqs.splice(${i},1);drawAdmin()`)}</div>
+${F('Pregunta','afq-q-'+i,f.q,'','¿Cuál es...?')}
+${F('Respuesta','afq-a-'+i,f.a,'textarea','La respuesta completa...')}</div>`).join('')+
+`<button class="aadd" onclick="C.faqs.push({q:'',a:''});drawAdmin()">+ Agregar pregunta</button>`;
+}
+else if(k==='sections'){
+const secKeys=Object.keys(C.sections);
+b.innerHTML=info('<b>Encabezados de secciones.</b> Cada sección de la página tiene un título, subtítulo y etiqueta con color. Estos textos aparecen arriba de las tarjetas.')+
+secKeys.map(sk=>{const s=C.sections[sk];return`<div class="acard"><div class="acard-head"><h4>🏷️ ${s.title} <span style="font-size:.65rem;color:var(--slate-400);font-weight:400">(${sk})</span></h4></div>
+<div class="ae-row ae-2">${F('Etiqueta superior','asc-tag-'+sk,s.tag,'','Currículo')}${F('Título de sección','asc-ti-'+sk,s.title,'','Contenido Teórico')}</div>
+${F('Descripción','asc-de-'+sk,s.desc,'textarea','Texto descriptivo debajo del título')}</div>`}).join('');
 }
 else if(k==='nav'){
-b.innerHTML=C.nav.map((n,i)=>`
-<div style="display:flex;gap:8px;margin-bottom:8px;align-items:center">
-<input id="an-ic-${i}" value="${n.icon}" style="width:50px;padding:8px;border:1px solid var(--slate-200);border-radius:6px;text-align:center" placeholder="Emoji">
-<input id="an-la-${i}" value="${n.label}" style="flex:1;padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Label">
-<input id="an-hr-${i}" value="${n.href}" style="width:120px;padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="#section">
-${delBtn(`C.nav.splice(${i},1);drawAdmin()`)}
-</div>`).join('')+
-`<button onclick="C.nav.push({label:'Nuevo',href:'#',icon:'📌'});drawAdmin()" style="padding:10px;background:var(--slate-100);border:1px dashed var(--slate-300);border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;width:100%;margin-top:8px">+ Agregar enlace</button>`;
+b.innerHTML=info('<b>Enlaces del menú.</b> Aparecen en la barra superior y en la barra inferior del celular. El enlace debe ser # seguido del ID de la sección (topics, simulations, labs, videos, periodic).')+
+C.nav.map((n,i)=>`<div class="acard" style="padding:12px"><div style="display:flex;gap:8px;align-items:center">
+<input id="an-ic-${i}" value="${n.icon}" style="width:48px;padding:8px;border:1px solid var(--slate-200);border-radius:6px;text-align:center;font-size:1.2rem">
+<input id="an-la-${i}" value="${n.label}" style="flex:1;padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="Texto">
+<input id="an-hr-${i}" value="${n.href}" style="width:110px;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-family:monospace;font-size:.82rem" placeholder="#topics">
+${D(`C.nav.splice(${i},1);drawAdmin()`)}</div></div>`).join('')+
+`<button class="aadd" onclick="C.nav.push({label:'Nuevo',href:'#',icon:'📌'});drawAdmin()">+ Agregar enlace</button>`;
 }
 else if(k==='footer'){
-b.innerHTML=R('Descripción del footer','afo-desc',C.footer.description,'textarea')+
-'<h4 style="font-weight:700;margin:20px 0 10px;font-size:.85rem">Columnas</h4>'+
-C.footer.columns.map((col,i)=>`
-<div style="border:1px solid var(--slate-200);border-radius:10px;padding:14px;margin-bottom:12px;background:#fff">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-<input id="afc-t-${i}" value="${col.title}" style="padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-weight:700" placeholder="Título columna">
-${delBtn(`C.footer.columns.splice(${i},1);drawAdmin()`)}
+b.innerHTML=info('<b>Pie de página.</b> Incluye descripción, columnas de links y redes sociales.')+
+F('Descripción del pie','afo-desc',C.footer.description,'textarea','Texto que aparece debajo del logo')+
+'<h4 style="font-weight:700;margin:16px 0 10px;font-size:.88rem">Columnas de enlaces</h4>'+
+C.footer.columns.map((col,i)=>`<div class="acard"><div class="acard-head"><h4>${col.title}</h4>${D(`C.footer.columns.splice(${i},1);drawAdmin()`)}</div>
+${F('Título de columna','afc-t-'+i,col.title,'','Académico')}
+${F('Links (uno por línea)','afc-l-'+i,col.links.join('\n'),'textarea','Temario\\nSimuladores\\nBibliografía')}</div>`).join('')+
+`<button class="aadd" onclick="C.footer.columns.push({title:'Nueva',links:['Link 1']});drawAdmin()">+ Agregar columna</button>`+
+'<h4 style="font-weight:700;margin:20px 0 10px;font-size:.88rem">Redes sociales</h4>'+
+C.footer.socials.map((s,i)=>`<div style="display:flex;gap:8px;margin-bottom:6px;align-items:center">
+<input id="afs-l-${i}" value="${s.label}" style="width:50px;padding:8px;border:1px solid var(--slate-200);border-radius:6px;text-align:center;font-weight:700" placeholder="f">
+<input id="afs-u-${i}" value="${s.url}" style="flex:1;padding:8px;border:1px solid var(--slate-200);border-radius:6px" placeholder="https://...">
+${D(`C.footer.socials.splice(${i},1);drawAdmin()`)}</div>`).join('')+
+`<button class="aadd" style="margin-top:6px" onclick="C.footer.socials.push({label:'🔗',url:'#'});drawAdmin()">+ Agregar red social</button>`;
+}
+else if(k==='customSims'){
+if(!C.customSims)C.customSims=[];
+b.innerHTML=info('<b>Crea tus propios simuladores</b> sin programar. Define las variables de entrada (sliders) y las fórmulas de salida. Usa los nombres de las variables en las fórmulas (ej: si la variable se llama "masa", escribe "masa" en la fórmula).')+
+C.customSims.map((s,i)=>`<div class="acard"><div class="acard-head"><h4><span class="acard-num">${i+1}</span> ${s.icon} ${s.title}</h4>${D(`C.customSims.splice(${i},1);drawAdmin()`)}</div>
+<div class="ae-row ae-icon"><div class="ae"><label>Emoji</label><input id="cs-ic-${i}" value="${s.icon}" style="text-align:center;font-size:1.3rem"></div><div class="ae"><label>Nombre del simulador</label><input id="cs-ti-${i}" value="${s.title}"></div></div>
+<div class="ae-row ae-3">${F('Descripción','cs-de-'+i,s.desc,'','¿Qué calcula?')}${F('Etiqueta','cs-tg-'+i,s.tag,'','General')}${F('Color','cs-co-'+i,s.color,'','var(--orange)')}</div>
+${F('Nota informativa (aparece abajo)','cs-info-'+i,s.info,'textarea','Fórmula o explicación')}
+<h4 style="font-weight:700;font-size:.82rem;margin:16px 0 8px;color:var(--slate-600)">📥 Variables de entrada (sliders)</h4>
+${s.inputs.map((inp,j)=>`<div class="asub"><div class="asub-head"><span>Variable ${j+1}: <b>${inp.key}</b></span>${D(`C.customSims[${i}].inputs.splice(${j},1);drawAdmin()`)}</div>
+<div class="ae-row ae-3">
+<div class="ae"><label>Nombre visible</label><input data-csi="${i}" data-ii="${j}" data-f="label" value="${inp.label}"></div>
+<div class="ae"><label>Nombre interno (sin espacios)</label><input data-csi="${i}" data-ii="${j}" data-f="key" value="${inp.key}" style="font-family:monospace"></div>
+<div class="ae"><label>Unidad</label><input data-csi="${i}" data-ii="${j}" data-f="unit" value="${inp.unit}"></div>
 </div>
-<label style="font-size:.65rem;font-weight:700;color:var(--slate-400);text-transform:uppercase">Links (uno por línea)</label>
-<textarea id="afc-l-${i}" rows="4" style="width:100%;padding:8px;border:1px solid var(--slate-200);border-radius:6px;font-size:.85rem;margin-top:4px">${col.links.join('\n')}</textarea>
+<div class="ae-row" style="grid-template-columns:1fr 1fr 1fr 1fr">
+<div class="ae"><label>Mínimo</label><input type="number" data-csi="${i}" data-ii="${j}" data-f="min" value="${inp.min}" step="any"></div>
+<div class="ae"><label>Máximo</label><input type="number" data-csi="${i}" data-ii="${j}" data-f="max" value="${inp.max}" step="any"></div>
+<div class="ae"><label>Paso</label><input type="number" data-csi="${i}" data-ii="${j}" data-f="step" value="${inp.step}" step="any"></div>
+<div class="ae"><label>Valor inicial</label><input type="number" data-csi="${i}" data-ii="${j}" data-f="default" value="${inp.default}" step="any"></div>
+</div></div>`).join('')}
+<button class="aadd" style="margin-top:4px;padding:8px;font-size:.78rem" onclick="C.customSims[${i}].inputs.push({label:'Nueva',key:'var'+C.customSims[${i}].inputs.length,unit:'',min:0,max:100,step:1,default:50});drawAdmin()">+ Agregar variable</button>
+<h4 style="font-weight:700;font-size:.82rem;margin:16px 0 8px;color:var(--slate-600)">📤 Resultados (fórmulas)</h4>
+${s.outputs.map((out,j)=>`<div class="asub"><div class="asub-head"><span>Resultado ${j+1}</span>${D(`C.customSims[${i}].outputs.splice(${j},1);drawAdmin()`)}</div>
+<div class="ae-row ae-2">
+<div class="ae"><label>Nombre del resultado</label><input data-cso="${i}" data-oi="${j}" data-f="label" value="${out.label}"></div>
+<div class="ae"><label>Unidad</label><input data-cso="${i}" data-oi="${j}" data-f="unit" value="${out.unit}"></div>
+</div>
+<div class="ae-row ae-2">
+<div class="ae"><label>Fórmula (usa nombres de variables)</label><input data-cso="${i}" data-oi="${j}" data-f="formula" value="${out.formula}" style="font-family:monospace" placeholder="masa / vol"></div>
+<div class="ae"><label>Decimales</label><input type="number" data-cso="${i}" data-oi="${j}" data-f="decimals" value="${out.decimals||3}" min="0" max="10"></div>
+</div></div>`).join('')}
+<button class="aadd" style="margin-top:4px;padding:8px;font-size:.78rem" onclick="C.customSims[${i}].outputs.push({label:'Resultado',formula:'',unit:'',color:'var(--teal)',decimals:3});drawAdmin()">+ Agregar resultado</button>
 </div>`).join('')+
-`<button onclick="C.footer.columns.push({title:'Nueva',links:['Link 1']});drawAdmin()" style="padding:10px;background:var(--slate-100);border:1px dashed var(--slate-300);border-radius:6px;cursor:pointer;font-size:.8rem;font-weight:600;width:100%">+ Agregar Columna</button>`;
+`<button class="aadd" style="background:var(--indigo);color:#fff;border:2px solid var(--indigo);font-size:.9rem;padding:16px" onclick="C.customSims.push({id:'custom-'+Date.now(),title:'Nuevo Simulador',icon:'🧮',desc:'',tag:'Personalizado',color:'var(--orange)',inputs:[{label:'Variable 1',key:'x',unit:'',min:0,max:100,step:1,default:50}],outputs:[{label:'Resultado',formula:'x * 2',unit:'',color:'var(--teal)',decimals:3}],info:''});drawAdmin();toast('✅ Simulador creado')">🧮 + Crear nuevo simulador</button>`;
+}
+else if(k==='password'){
+b.innerHTML=info('<b>Contraseña del panel admin.</b> Cámbiala para proteger el acceso. Si la olvidas, puedes editarla directamente en el archivo config.js.')+
+F('Contraseña actual','apw',C.admin.password,'','quimicau2024')+
+`<div style="margin-top:12px;padding:12px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:.78rem;color:#92400e">⚠️ Después de cambiar la contraseña, haz clic en "Aplicar" y luego "Descargar config.js" para que el cambio sea permanente.</div>`;
 }
 else if(k==='raw'){
-b.innerHTML=`<div class="admin-field"><label>Configuración completa (JSON)</label><textarea id="admin-raw" style="min-height:500px;font-size:.78rem;font-family:monospace">${JSON.stringify(CONFIG,null,2)}</textarea></div>
-<p style="font-size:.72rem;color:var(--slate-400);margin-top:8px">⚠️ Editar con cuidado. Un error de sintaxis impedirá aplicar los cambios.</p>`;
+b.innerHTML=info('⚠️ <b>Modo avanzado.</b> Aquí puedes editar TODA la configuración como JSON. Un error de sintaxis impedirá guardar los cambios. Solo para usuarios técnicos.')+
+`<div class="ae"><label>Configuración completa (JSON)</label><textarea id="admin-raw" style="min-height:500px;font-family:monospace;font-size:.76rem">${JSON.stringify(CONFIG,null,2)}</textarea></div>`;
 }
 }
 
@@ -625,14 +711,38 @@ try{
 const k=adminTabs[activeTab].key;
 if(k==='site'){C.site.name=document.getElementById('as-name').value;C.site.tagline=document.getElementById('as-tag').value;C.site.description=document.getElementById('as-desc').value;C.site.url=document.getElementById('as-url').value;C.site.analyticsId=document.getElementById('as-ga').value;C.site.year=document.getElementById('as-year').value}
 else if(k==='hero'){C.hero.badge=document.getElementById('ah-badge').value;C.hero.title=document.getElementById('ah-title').value;C.hero.subtitle=document.getElementById('ah-sub').value}
+else if(k==='heroCards'){C.hero.cards.forEach((c,i)=>{const ic=document.getElementById('ahc-ic-'+i),ti=document.getElementById('ahc-ti-'+i),de=document.getElementById('ahc-de-'+i);if(ic)c.icon=ic.value;if(ti)c.title=ti.value;if(de)c.desc=de.value})}
+else if(k==='heroCta'){C.hero.cta.forEach((c,i)=>{const tx=document.getElementById('acta-tx-'+i),tg=document.getElementById('acta-tg-'+i),st=document.getElementById('acta-st-'+i);if(tx)c.text=tx.value;if(tg)c.target=tg.value;if(st)c.style=st.value})}
 else if(k==='topics'){C.topics.forEach((t,i)=>{const ic=document.getElementById('at-ic-'+i),ti=document.getElementById('at-ti-'+i),de=document.getElementById('at-de-'+i),tg=document.getElementById('at-tg-'+i),co=document.getElementById('at-co-'+i),le=document.getElementById('at-le-'+i);if(ic)t.icon=ic.value;if(ti)t.title=ti.value;if(de)t.desc=de.value;if(tg)t.tag=tg.value;if(co)t.color=co.value;if(le)t.lessons=le.value.split('\n').filter(x=>x.trim())})}
 else if(k==='videos'){C.videos.forEach((v,i)=>{const ti=document.getElementById('av-ti-'+i),yt=document.getElementById('av-yt-'+i),du=document.getElementById('av-du-'+i),ca=document.getElementById('av-ca-'+i),de=document.getElementById('av-de-'+i);if(ti)v.title=ti.value;if(yt)v.youtubeId=yt.value;if(du)v.duration=du.value;if(ca)v.category=ca.value;if(de)v.description=de.value})}
 else if(k==='faqs'){C.faqs.forEach((f,i)=>{const q=document.getElementById('afq-q-'+i),a=document.getElementById('afq-a-'+i);if(q)f.q=q.value;if(a)f.a=a.value})}
 else if(k==='lessons'){document.querySelectorAll('[data-lk]').forEach(el=>{const key=el.dataset.lk,idx=+el.dataset.li,f=el.dataset.f;if(C.lessonContent[key]&&C.lessonContent[key][idx])C.lessonContent[key][idx][f]=el.value})}
 else if(k==='quizzes'){document.querySelectorAll('[data-qk]').forEach(el=>{const key=el.dataset.qk,idx=+el.dataset.qi,f=el.dataset.f;if(C.quizzes[key]&&C.quizzes[key][idx]){if(f==='opts')C.quizzes[key][idx][f]=el.value.split('\n').filter(x=>x.trim());else if(f==='correct')C.quizzes[key][idx][f]=+el.value;else C.quizzes[key][idx][f]=el.value}})}
 else if(k==='labs'){C.labs.forEach((l,i)=>{const ic=document.getElementById('al-ic-'+i),ti=document.getElementById('al-ti-'+i),de=document.getElementById('al-de-'+i),tg=document.getElementById('al-tg-'+i),co=document.getElementById('al-co-'+i);if(ic)l.icon=ic.value;if(ti)l.title=ti.value;if(de)l.desc=de.value;if(tg)l.tag=tg.value;if(co)l.color=co.value})}
+else if(k==='sections'){Object.keys(C.sections).forEach(sk=>{const tag=document.getElementById('asc-tag-'+sk),ti=document.getElementById('asc-ti-'+sk),de=document.getElementById('asc-de-'+sk);if(tag)C.sections[sk].tag=tag.value;if(ti)C.sections[sk].title=ti.value;if(de)C.sections[sk].desc=de.value})}
 else if(k==='nav'){C.nav.forEach((n,i)=>{const ic=document.getElementById('an-ic-'+i),la=document.getElementById('an-la-'+i),hr=document.getElementById('an-hr-'+i);if(ic)n.icon=ic.value;if(la)n.label=la.value;if(hr)n.href=hr.value})}
-else if(k==='footer'){C.footer.description=document.getElementById('afo-desc').value;C.footer.columns.forEach((col,i)=>{const t=document.getElementById('afc-t-'+i),l=document.getElementById('afc-l-'+i);if(t)col.title=t.value;if(l)col.links=l.value.split('\n').filter(x=>x.trim())})}
+else if(k==='footer'){C.footer.description=document.getElementById('afo-desc').value;C.footer.columns.forEach((col,i)=>{const t=document.getElementById('afc-t-'+i),l=document.getElementById('afc-l-'+i);if(t)col.title=t.value;if(l)col.links=l.value.split('\n').filter(x=>x.trim())});C.footer.socials.forEach((s,i)=>{const l=document.getElementById('afs-l-'+i),u=document.getElementById('afs-u-'+i);if(l)s.label=l.value;if(u)s.url=u.value})}
+else if(k==='customSims'){
+C.customSims.forEach((s,i)=>{
+const ic=document.getElementById('cs-ic-'+i),ti=document.getElementById('cs-ti-'+i),de=document.getElementById('cs-de-'+i),tg=document.getElementById('cs-tg-'+i),co=document.getElementById('cs-co-'+i),nfo=document.getElementById('cs-info-'+i);
+if(ic)s.icon=ic.value;if(ti)s.title=ti.value;if(de)s.desc=de.value;if(tg)s.tag=tg.value;if(co)s.color=co.value;if(nfo)s.info=nfo.value;
+});
+document.querySelectorAll('[data-csi]').forEach(el=>{
+const si=+el.dataset.csi,ii=+el.dataset.ii,f=el.dataset.f;
+if(C.customSims[si]&&C.customSims[si].inputs[ii]){
+if(f==='min'||f==='max'||f==='step'||f==='default')C.customSims[si].inputs[ii][f]=+el.value;
+else C.customSims[si].inputs[ii][f]=el.value;
+}
+});
+document.querySelectorAll('[data-cso]').forEach(el=>{
+const si=+el.dataset.cso,oi=+el.dataset.oi,f=el.dataset.f;
+if(C.customSims[si]&&C.customSims[si].outputs[oi]){
+if(f==='decimals')C.customSims[si].outputs[oi][f]=+el.value;
+else C.customSims[si].outputs[oi][f]=el.value;
+}
+});
+}
+else if(k==='password'){const pw=document.getElementById('apw');if(pw&&pw.value.trim())C.admin.password=pw.value.trim()}
 else if(k==='raw'){const parsed=JSON.parse(document.getElementById('admin-raw').value);Object.keys(parsed).forEach(key=>{CONFIG[key]=parsed[key]})}
 buildApp();
 toast('✅ Cambios aplicados — estadísticas actualizadas');
