@@ -1,17 +1,17 @@
 const CONFIG = {
   site: {
-    name: 'QuímicaU',
-    tagline: 'Plataforma de Química Universitaria',
-    description: 'Plataforma educativa de Química General universitaria: simulaciones interactivas, contenido teórico completo, guías de laboratorio y videos explicativos.',
+    name: 'Química UNESUR',
+    tagline: 'Plataforma de Química General — UNESUR',
+    description: 'Plataforma educativa de Química General — UNESUR. Simulaciones interactivas, contenido teórico, guías de laboratorio y videos explicativos.',
     url: 'https://quimicau.vercel.app',
     analyticsId: 'G-XXXXXXXXXX',
     year: 2024,
     version: '2.0.0'
   },
   hero: {
-    badge: 'Actualizado 2024',
-    title: 'Domina la <span class="grad">Química Universitaria</span> con Ciencia Interactiva',
-    subtitle: 'La plataforma educativa más completa para estudiantes de ciencias e ingeniería.',
+    badge: 'Prof. Wilmer Molina · Química General',
+    title: 'Tu laboratorio de <span class="grad">Química</span> en un clic',
+    subtitle: 'Teoría, simuladores y prácticas de laboratorio para dominar Química General universitaria.',
     cta: [
       { text: '🚀 Explorar Temas', target: 'topics', style: 'primary' },
       { text: '🧪 Simuladores', target: 'simulations', style: 'ghost' }
@@ -194,7 +194,7 @@ const CONFIG = {
     { q: '¿Qué es un reactivo limitante?', a: 'Es el reactivo que se consume totalmente en una reacción química y determina la cantidad máxima de producto que se puede formar.' }
   ],
   footer: {
-    description: 'Plataforma dedicada a la enseñanza de la química con rigor académico y herramientas modernas.',
+    description: 'Cátedra del Prof. Wilmer Molina. Desarrollado por Jimmy Bracho.',
     columns: [
       { title: 'Académico', links: ['Temario Completo', 'Simuladores', 'Bibliografía', 'Ejercicios PDF'] },
       { title: 'Recursos', links: ['Tabla Periódica', 'Calculadora Molar', 'Glosario', 'Normas APA'] },
