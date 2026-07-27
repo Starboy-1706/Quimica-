@@ -1,4 +1,4 @@
-const CONFIG = {
+﻿const CONFIG = {
   site: {
     name: 'Química UNESUR',
     tagline: 'Plataforma de Química General — UNESUR',
@@ -278,4 +278,3 @@ const CONFIG = {
   ],
   admin: { password: 'quimicau2024' }
 };
-
