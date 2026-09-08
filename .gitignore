@@ -1,0 +1,36 @@
+# Dependencias
+/node_modules
+
+# Next.js
+/.next/
+/out/
+
+# Producción
+/build
+
+# Variables de entorno (nunca versionar credenciales)
+.env
+.env*.local
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema
+.DS_Store
+
+# Almacenamiento local de archivos subidos (driver de reserva)
+/.storage/
+
+# Playwright E2E
+/e2e/.auth/
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# Nota: las migraciones de ./drizzle SÍ se versionan (son el historial del esquema).

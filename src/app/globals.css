@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+
+  /* Sitio público — papel editorial cálido */
+  --color-paper: #f5efe1;
+  --color-paper-deep: #ece3cd;
+  --color-ink: #1b1710;
+  --color-ink-soft: #56503d;
+
+  /* Panel de administración — noche de estudio */
+  --color-night: #100e09;
+  --color-coal: #17130e;
+  --color-panel: #1f1a12;
+  --color-lift: #28221a;
+  --color-line: #332b1f;
+  --color-cream: #f2ead4;
+  --color-sand: #b6aa88;
+  --color-muted: #8b8064;
+
+  /* Acentos académicos */
+  --color-gold: #a4751f;
+  --color-gold-deep: #7c5a12;
+  --color-brass: #dca63f;
+  --color-sage: #6fa87c;
+  --color-clay: #c96f4a;
+  --color-steel: #7ba1c4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Accesibilidad: foco siempre visible con teclado */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-rise {
+    animation: none;
+  }
+}
+
+::selection {
+  background: var(--color-brass);
+  color: var(--color-night);
+}
+
+/* Entrada suave para tarjetas y listas */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-rise {
+  animation: rise 0.6s cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+/* Línea editorial bajo los títulos de sección */
+.rule-double {
+  border-top: 1px solid currentColor;
+  border-bottom: 3px double currentColor;
+}
+
+/* Texto enriquecido sanitizado (descripciones y avisos) */
+.rich {
+  line-height: 1.68;
+}
+.rich p + p {
+  margin-top: 0.55rem;
+}
+.rich ul {
+  margin: 0.4rem 0 0.4rem 1.15rem;
+  list-style: disc;
+}
+.rich ul li {
+  margin-top: 0.2rem;
+}
+.rich a {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+.rich sub,
+.rich sup {
+  font-size: 0.72em;
+  letter-spacing: -0.01em;
+}
+.rich .formula {
+  border-radius: 6px;
+  background: rgb(127 113 74 / 0.14);
+  padding: 0.1em 0.4em;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.88em;
+}
+
+/* Scrollbar discreta en el panel oscuro */
+.dark-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.dark-scroll::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 8px;
+}
+.dark-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}

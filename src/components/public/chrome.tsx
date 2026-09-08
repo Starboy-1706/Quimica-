@@ -1,0 +1,136 @@
+import Link from "next/link";
+import type { CSSProperties } from "react";
+import { ArrowUpRight, FlaskConical, LogIn } from "lucide-react";
+import type { ProfessorProfile, User } from "@/db/schema";
+
+export type PublicNavSection = "inicio" | "asignaturas" | "agenda";
+
+/** Variables de marca (colores institucionales de site_settings). */
+export function brandVars(settings: Record<string, string>): CSSProperties {
+  return {
+    "--brand": settings.brand_primary || "#a4751f",
+    "--brand-2": settings.brand_accent || "#dca63f",
+  } as CSSProperties;
+}
+
+const NAV_LINKS: Array<{
+  id: PublicNavSection;
+  href: string;
+  label: string;
+}> = [
+  { id: "inicio", href: "/", label: "Inicio" },
+  { id: "asignaturas", href: "/asignaturas", label: "Asignaturas" },
+  { id: "agenda", href: "/agenda", label: "Agenda" },
+];
+
+type ProfessorInfo = (ProfessorProfile & { user: User }) | undefined;
+
+/**
+ * Cabecera pública accesible: landmarks semánticos, enlace de salto al
+ * contenido y estado de navegación con aria-current.
+ */
+export function PublicNav({
+  active,
+  profile,
+}: {
+  active: PublicNavSection;
+  profile: ProfessorInfo;
+}) {
+  return (
+    <>
+      <a
+        href="#contenido"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-ink focus:px-4 focus:py-2 focus:text-sm focus:text-paper"
+      >
+        Saltar al contenido principal
+      </a>
+      <header className="sticky top-0 z-30 border-b border-ink/10 bg-paper/90 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
+          <Link
+            href="/"
+            className="flex items-center gap-3"
+            aria-label="Inicio — Aula docente"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-(--brand) text-paper">
+              <FlaskConical className="h-4.5 w-4.5" strokeWidth={1.75} aria-hidden="true" />
+            </span>
+            <span className="leading-tight">
+              <span className="block font-display text-base font-semibold">
+                {profile?.user.fullName ?? "Prof. Wilmer Molina"}
+              </span>
+              <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft">
+                {profile?.department ?? "Departamento de Química"}
+              </span>
+            </span>
+          </Link>
+          <nav aria-label="Navegación principal">
+            <ul className="flex items-center gap-1 text-sm sm:gap-2">
+              {NAV_LINKS.map((link) => (
+                <li key={link.id} className="hidden sm:block">
+                  <Link
+                    href={link.href}
+                    aria-current={active === link.id ? "page" : undefined}
+                    className={`rounded-full px-3.5 py-1.5 transition ${
+                      active === link.id
+                        ? "bg-ink text-paper"
+                        : "text-ink-soft hover:text-ink"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {/* Móvil: iconos compactos */}
+              {NAV_LINKS.map((link) => (
+                <li key={`${link.id}-m`} className="sm:hidden">
+                  <Link
+                    href={link.href}
+                    aria-current={active === link.id ? "page" : undefined}
+                    className={`rounded-full px-2.5 py-1.5 text-xs font-medium transition ${
+                      active === link.id
+                        ? "bg-ink text-paper"
+                        : "text-ink-soft"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/admin"
+                  className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-medium transition hover:border-(--brand) hover:text-(--brand)"
+                >
+                  <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span className="hidden sm:inline">Acceso interno</span>
+                  <span className="sm:hidden">Interno</span>
+                </Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+    </>
+  );
+}
+
+export function PublicFooter({ profile }: { profile: ProfessorInfo }) {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="border-t border-ink/10" role="contentinfo">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-5 py-8 text-xs text-ink-soft sm:flex-row sm:items-center sm:px-8">
+        <p>
+          © {year} {profile?.user.fullName ?? "Prof. Wilmer Molina"} ·{" "}
+          {profile?.department ?? "Departamento de Química"} · Aula docente con
+          gestión auditada de contenidos.
+        </p>
+        <Link
+          href="/admin"
+          className="inline-flex items-center gap-1.5 transition hover:text-ink"
+        >
+          Panel docente <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+        </Link>
+      </div>
+    </footer>
+  );
+}
