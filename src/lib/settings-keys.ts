@@ -25,6 +25,11 @@ export const SITE_SETTING_KEYS = [
   "section_about_title",
   "section_contact_title",
   "section_contact_subtitle",
+  // Simulaciones de compuestos (visor 3D + enlace opcional Google Sites)
+  "section_simulations_title",
+  "section_simulations_subtitle",
+  "sim_google_sites_url",
+  "sim_google_sites_title",
   // Configuración de Notificaciones / Resend
   "resend_api_key",
   "resend_from",
@@ -58,6 +63,10 @@ export const SITE_SETTING_DESCRIPTIONS: Record<SiteSettingKey, string> = {
   section_about_title: "Título de la sección sobre el docente",
   section_contact_title: "Título de la sección de contacto",
   section_contact_subtitle: "Descripción de la sección de contacto",
+  section_simulations_title: "Título de la sección de simulaciones",
+  section_simulations_subtitle: "Descripción de la sección de simulaciones",
+  sim_google_sites_url: "URL embebible de la página de Google Sites (opcional)",
+  sim_google_sites_title: "Título del bloque embebido de Google Sites",
   // Configuración de Notificaciones / Resend
   resend_api_key: "Clave de API de Resend (re_...)",
   resend_from: "Remitente de correos (ej. Aula Docente <onboarding@resend.dev>)",

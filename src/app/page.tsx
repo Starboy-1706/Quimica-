@@ -36,6 +36,7 @@ import {
   PublicNav,
 } from "@/components/public/chrome";
 import { ContactForm } from "@/components/admin/forms";
+import { SimulationsSection } from "@/components/public/simulations";
 
 export const dynamic = "force-dynamic";
 
@@ -140,6 +141,14 @@ export default async function PublicHomePage() {
   const sectionContactSubtitle =
     settings.section_contact_subtitle ||
     "¿Dudas con un ejercicio, una práctica de laboratorio o el programa? Escríbeme desde aquí: tu mensaje llega a la bandeja interna del aula y te respondo a tu correo institucional.";
+  const sectionSimulationsTitle =
+    settings.section_simulations_title || "Simulaciones de compuestos";
+  const sectionSimulationsSubtitle =
+    settings.section_simulations_subtitle ||
+    "Explora en 3D las moléculas clave del laboratorio: geometría, enlaces y colores CPK, directamente en esta página.";
+  const simGoogleSitesUrl = settings.sim_google_sites_url?.trim() ?? "";
+  const simGoogleSitesTitle =
+    settings.sim_google_sites_title || "Simulaciones externas (Google Sites)";
 
   const personJsonLd = {
     "@context": "https://schema.org",
@@ -353,9 +362,10 @@ export default async function PublicHomePage() {
             {[
               ["01", "Asignaturas", "#activas"],
               ["02", "Agenda", "#proximas"],
-              ["03", "Avisos", "#avisos"],
-              ["04", "Docente", "#docente-h"],
-              ["05", "Consulta", "#consultas"],
+              ["03", "Simulaciones", "#simulaciones"],
+              ["04", "Avisos", "#avisos"],
+              ["05", "Docente", "#docente-h"],
+              ["06", "Consulta", "#consultas"],
             ].map(([num, label, href]) => (
               <li key={href} className="shrink-0">
                 <a
@@ -534,13 +544,43 @@ export default async function PublicHomePage() {
           </section>
         ) : null}
 
+        {/* ── Simulaciones de compuestos (3D nativo + Google Sites) ── */}
+        <section
+          id="simulaciones"
+          className="border-y border-ink/10 bg-night text-cream"
+          aria-labelledby="simulaciones-h"
+        >
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+            <div className="flex items-end justify-between border-b border-paper/25 pb-4">
+              <div>
+                <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
+                  03
+                </p>
+                <h2 id="simulaciones-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+                  {sectionSimulationsTitle}
+                </h2>
+              </div>
+              <Atom className="hidden h-6 w-6 text-paper/40 sm:block" aria-hidden="true" />
+            </div>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-paper/65">
+              {sectionSimulationsSubtitle}
+            </p>
+            <div className="mt-8">
+              <SimulationsSection
+                embedUrl={simGoogleSitesUrl.startsWith("https://") ? simGoogleSitesUrl : ""}
+                embedTitle={simGoogleSitesTitle}
+              />
+            </div>
+          </div>
+        </section>
+
         {/* ── Tablón de avisos ───────────────────────────────────── */}
         <section id="avisos" className="bg-ink text-paper" aria-labelledby="avisos-h">
           <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
             <div className="flex items-end justify-between border-b border-paper/25 pb-4">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                  03
+                  04
                 </p>
                 <h2 id="avisos-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionAnnouncementsTitle}
@@ -620,7 +660,7 @@ export default async function PublicHomePage() {
             <div className="grid grid-cols-1 gap-10 border-b-2 border-ink pb-4 md:grid-cols-[1fr_2fr]">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                  04
+                  05
                 </p>
                 <h2 id="docente-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionAboutTitle}

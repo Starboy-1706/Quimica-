@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Atom,
   BookOpen,
   CalendarClock,
   FlaskConical,
@@ -28,6 +29,12 @@ const MENU_LINKS = [
     label: "Agenda",
     desc: "Exámenes y fechas clave",
     icon: CalendarClock,
+  },
+  {
+    href: "/#simulaciones",
+    label: "Simulaciones",
+    desc: "Moléculas en 3D del laboratorio",
+    icon: Atom,
   },
   {
     href: "/#avisos",

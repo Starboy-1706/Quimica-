@@ -1200,10 +1200,59 @@ export function SiteSettingsForm({
         </div>
       </div>
 
-      {/* Grupo 4: Colores institucionales */}
+      {/* Grupo 4: Simulaciones de compuestos y Google Sites */}
       <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
         <p className="font-display text-base font-semibold text-cream">
-          4. Colores Institucionales Personalizables
+          4. Simulaciones de Compuestos y Google Sites
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Título de la sección Simulaciones">
+            <TextInput
+              name="section_simulations_title"
+              defaultValue={values.section_simulations_title ?? "Simulaciones de compuestos"}
+            />
+          </Field>
+          <Field label="Subtítulo / descripción">
+            <TextInput
+              name="section_simulations_subtitle"
+              defaultValue={values.section_simulations_subtitle ?? ""}
+            />
+          </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-[1.6fr_1fr]">
+          <Field
+            label="URL de la página de Google Sites (opcional)"
+            hint="Pega el enlace público de tu página de Google Sites (debe empezar por https://). Si lo dejas vacío, solo se muestra el visor 3D nativo."
+          >
+            <TextInput
+              name="sim_google_sites_url"
+              type="url"
+              inputMode="url"
+              placeholder="https://sites.google.com/view/tu-sitio"
+              defaultValue={values.sim_google_sites_url ?? ""}
+            />
+          </Field>
+          <Field label="Título del bloque embebido">
+            <TextInput
+              name="sim_google_sites_title"
+              placeholder="Simulaciones externas (Google Sites)"
+              defaultValue={values.sim_google_sites_title ?? ""}
+            />
+          </Field>
+        </div>
+        <p className="rounded-xl border border-line bg-lift/50 px-3.5 py-2.5 text-[11px] leading-relaxed text-muted">
+          <strong className="text-sand">Cómo publicar en Google Sites:</strong>{" "}
+          en tu sitio → <em>Compartir</em> → <em>Copiar enlace público</em>. La
+          página se mostrará embebida en la sección nº 03 con sandbox seguro;
+          el visor 3D de moléculas (H₂O, CO₂, NH₃, CH₄, etanol, benceno)
+          siempre funciona sin depender de Google.
+        </p>
+      </div>
+
+      {/* Grupo 5: Colores institucionales */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          5. Colores Institucionales Personalizables
         </p>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field
@@ -1227,10 +1276,10 @@ export function SiteSettingsForm({
         </div>
       </div>
 
-      {/* Grupo 5: Notificaciones y Resend */}
+      {/* Grupo 6: Notificaciones y Resend */}
       <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
         <p className="font-display text-base font-semibold text-cream">
-          5. Configuración de Correo y Resend
+          6. Configuración de Correo y Resend
         </p>
         <Field
           label="Resend API Key"

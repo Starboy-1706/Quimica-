@@ -128,6 +128,7 @@ export function PublicFooter({
     { href: "/", label: "Inicio" },
     { href: "/asignaturas", label: "Asignaturas" },
     { href: "/agenda", label: "Agenda" },
+    { href: "/#simulaciones", label: "Simulaciones" },
     { href: "/#avisos", label: "Avisos" },
     { href: "/#consultas", label: "Consulta directa" },
   ];

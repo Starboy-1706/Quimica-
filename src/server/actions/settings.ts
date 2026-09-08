@@ -76,6 +76,16 @@ export async function updateSiteSettingsAction(
       }
     }
 
+    // El enlace embebido de Google Sites debe ser https:// (contenido externo).
+    if (
+      changed.sim_google_sites_url &&
+      !changed.sim_google_sites_url.startsWith("https://")
+    ) {
+      return actionError(
+        "La URL de Google Sites debe empezar por https:// (usa el enlace público del sitio).",
+      );
+    }
+
     for (const key of SITE_SETTING_KEYS) {
       await db
         .insert(siteSettings)
