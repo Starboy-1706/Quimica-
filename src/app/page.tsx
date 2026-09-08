@@ -228,6 +228,14 @@ export default async function PublicHomePage() {
                 </div>
                 <div>
                   <dt className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-soft">
+                    Materiales del período
+                  </dt>
+                  <dd className="mt-1 font-display text-4xl font-medium">
+                    {activeCourses.reduce((acc, course) => acc + course.materials.length, 0)}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10px] uppercase tracking-[0.24em] text-ink-soft">
                     Próximos eventos
                   </dt>
                   <dd className="mt-1 font-display text-4xl font-medium">
@@ -237,9 +245,9 @@ export default async function PublicHomePage() {
               </dl>
             </div>
 
-            {/* Retrato de laboratorio + tarjeta de atención */}
+                {/* Retrato de laboratorio + tarjeta de atención */}
             <div className="relative">
-              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-ink/10">
+              <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-ink/10 ring-1 ring-(--brand)/25 ring-inset">
                 <Image
                   src={heroImageUrl}
                   alt="Fotografía principal del aula"
@@ -248,7 +256,12 @@ export default async function PublicHomePage() {
                   sizes="(min-width: 1024px) 42vw, 100vw"
                   className="object-cover"
                 />
+                {/* Veladura institucional para integrar la foto con la marca */}
+                <div className="absolute inset-0 bg-(--brand)/15 mix-blend-multiply" aria-hidden="true" />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" aria-hidden="true" />
+                <p className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-[0.22em] text-paper/80">
+                  Práctica de laboratorio · Aula docente
+                </p>
               </div>
               <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-ink/10 bg-paper p-5 shadow-[0_18px_50px_-20px_rgba(27,23,16,0.45)] sm:mx-6">
                 <p className="font-display text-lg font-semibold">
@@ -292,6 +305,37 @@ export default async function PublicHomePage() {
             </div>
           </div>
         </section>
+
+        {/* ── Índice de secciones (correlación de contenidos) ───── */}
+        <nav
+          aria-label="Índice de la portada"
+          className="border-b border-ink/10 bg-paper-deep/40"
+        >
+          <ul className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-5 sm:px-8" role="list">
+            {[
+              ["01", "Asignaturas", "#activas"],
+              ["02", "Agenda", "#proximas"],
+              ["03", "Avisos", "#avisos"],
+              ["04", "Docente", "#docente-h"],
+              ["05", "Consulta", "#consultas"],
+            ].map(([num, label, href]) => (
+              <li key={href} className="shrink-0">
+                <a
+                  href={href}
+                  className="group flex items-center gap-2.5 px-4 py-4 transition hover:bg-paper-deep/70"
+                >
+                  <span className="font-mono text-[11px] font-medium tracking-widest text-(--brand-2)">
+                    {num}
+                  </span>
+                  <span className="text-xs font-medium text-ink-soft transition group-hover:text-ink">
+                    {label}
+                  </span>
+                  <span className="h-px w-6 bg-transparent transition group-hover:bg-(--brand)" aria-hidden="true" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
 
         {/* ── Accesos directos a asignaturas activas ─────────────── */}
         <section
@@ -418,10 +462,22 @@ export default async function PublicHomePage() {
                         </p>
                       </div>
                       <div className="min-w-0 flex-1 border-l border-ink/10 pl-4">
-                        <p className="truncate font-medium">{event.title}</p>
-                        <p className="mt-0.5 text-xs text-ink-soft">
+                        <span
+                          className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-medium ${
+                            event.kind === "examen"
+                              ? "bg-clay/10 text-clay"
+                              : event.kind === "cambio_aula"
+                                ? "bg-steel/10 text-steel"
+                                : event.kind === "entrega"
+                                  ? "bg-(--brand-2)/15 text-(--brand)"
+                                  : "border border-ink/15 text-ink-soft"
+                          }`}
+                        >
                           {ANNOUNCEMENT_KIND_LABELS[event.kind]}
-                          {event.course ? ` · ${event.course.code}` : " · General"}
+                        </span>
+                        <p className="mt-1.5 truncate font-medium">{event.title}</p>
+                        <p className="mt-0.5 text-xs text-ink-soft">
+                          {event.course ? event.course.code : "Aviso general"}
                         </p>
                       </div>
                       {event.course ? (
@@ -496,7 +552,16 @@ export default async function PublicHomePage() {
                       </time>
                     </div>
                     <h3 className="mt-4 font-display text-xl font-medium leading-snug">
-                      {announcement.title}
+                      {announcement.course ? (
+                        <Link
+                          href={courseHref(announcement.course.slug)}
+                          className="transition hover:text-(--brand-2)"
+                        >
+                          {announcement.title}
+                        </Link>
+                      ) : (
+                        announcement.title
+                      )}
                     </h3>
                     <div
                       className="rich mt-2 text-sm leading-relaxed text-paper/65"

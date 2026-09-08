@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { and, asc, isNotNull, isNull, eq } from "drizzle-orm";
+import { and, asc, eq, isNotNull, isNull } from "drizzle-orm";
 import {
   ArrowLeft,
   ArrowRight,
@@ -40,7 +40,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Agenda académica",
   description:
-    "Calendario público con las fechas clave del período: exámenes, entregas de proyectos, seminarios y cambios de aula del Departamento de Química.",
+    "Calendario público con las fechas clave del período: exámenes, entregas de proyectos, seminarios y cambios de aula.",
 };
 
 const KIND_DOT: Record<AnnouncementKind, string> = {
@@ -70,14 +70,14 @@ type AgendaEvent = {
 export default async function PublicAgendaPage({
   searchParams,
 }: {
-  searchParams: Promise<{ anio?: string; mes?: string }>;
+  searchParams: Promise<{ anio?: string; mes?: string; curso?: string }>;
 }) {
-  const { anio, mes } = await searchParams;
+  const { anio, mes, curso } = await searchParams;
   const today = startOfDay(currentDay());
 
   const rawYear = Number.parseInt(anio ?? "", 10);
   const rawMonth = Number.parseInt(mes ?? "", 10);
-  const cursor = {
+  const cursorMonth = {
     year:
       Number.isFinite(rawYear) && rawYear >= 2000 && rawYear <= 2100
         ? rawYear
@@ -87,14 +87,16 @@ export default async function PublicAgendaPage({
         ? rawMonth
         : today.getMonth() + 1,
   };
+  const activeCourseFilter = typeof curso === "string" && curso ? curso : null;
 
   const [settings, profile, publicCourses, rawEvents] = await Promise.all([
     getSiteSettingsMap(),
     getProfessorPublicProfile(),
-    db
-      .select({ id: courses.id })
-      .from(courses)
-      .where(and(eq(courses.status, "publicado"), isNull(courses.deletedAt))),
+    db.query.courses.findMany({
+      where: and(eq(courses.status, "publicado"), isNull(courses.deletedAt)),
+      columns: { id: true, code: true, slug: true },
+      orderBy: [asc(courses.code)],
+    }),
     db.query.courseAnnouncements.findMany({
       where: and(
         eq(courseAnnouncements.status, "publicado"),
@@ -107,8 +109,10 @@ export default async function PublicAgendaPage({
   ]);
 
   const publicCourseIds = new Set(publicCourses.map((course) => course.id));
+  const institutionName =
+    profile?.department ?? settings.institution_name ?? "Departamento de Química";
 
-  const events: AgendaEvent[] = rawEvents
+  const allEvents: AgendaEvent[] = rawEvents
     .filter(
       (announcement) =>
         announcement.eventDate &&
@@ -128,6 +132,14 @@ export default async function PublicAgendaPage({
       };
     });
 
+  // Filtro por asignatura (incluye los avisos generales del calendario).
+  const events = activeCourseFilter
+    ? allEvents.filter(
+        (event) =>
+          event.courseCode === activeCourseFilter || event.courseCode === null,
+      )
+    : allEvents;
+
   const byDate = new Map<string, AgendaEvent[]>();
   for (const event of events) {
     const list = byDate.get(event.key) ?? [];
@@ -135,50 +147,89 @@ export default async function PublicAgendaPage({
     byDate.set(event.key, list);
   }
 
-  const grid = buildMonthGrid(cursor);
-  const prev = addMonths(cursor, -1);
-  const next = addMonths(cursor, 1);
+  const grid = buildMonthGrid(cursorMonth);
+  const prev = addMonths(cursorMonth, -1);
+  const next = addMonths(cursorMonth, 1);
   const todayKey = toDateKey(today);
 
   const upcoming = events.filter((event) => event.date >= today).slice(0, 12);
-  const past = events
-    .filter((event) => event.date < today)
-    .slice(-6)
-    .reverse();
+  const past = events.filter((event) => event.date < today).slice(-6).reverse();
 
-  function monthHref({ year, month }: { year: number; month: number }): string {
-    return `/agenda?anio=${year}&mes=${month}`;
+  function agendHref(
+    m: { year: number; month: number },
+    courseCode: string | null = activeCourseFilter,
+  ): string {
+    const params = new URLSearchParams({
+      anio: String(m.year),
+      mes: String(m.month),
+    });
+    if (courseCode) params.set("curso", courseCode);
+    return `/agenda?${params.toString()}`;
   }
 
   return (
     <div className="min-h-screen bg-paper text-ink" style={brandVars(settings)}>
-      <PublicNav active="agenda" profile={profile} />
+      <PublicNav active="agenda" profile={profile} settings={settings} />
 
       <main id="contenido" className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <header className="max-w-2xl">
+        <header className="relative max-w-2xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-(--brand)">
-            Departamento de Química
+            {institutionName}
           </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">
+          <h1 className="mt-3 font-display text-4xl font-semibold leading-tight sm:text-6xl">
             Agenda académica
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-soft">
-            Fechas clave del período: exámenes, entregas de proyectos,
-            seminarios y sesiones reprogramadas. Hoy es{" "}
+            Fechas clave del período: exámenes, entregas, seminarios y
+            sesiones reprogramadas. Hoy es{" "}
             <strong className="font-medium text-ink">{formatLongDate(today)}</strong>.
+          </p>
+          <p className="pointer-events-none absolute -top-4 right-0 hidden select-none font-display text-[7rem] font-black italic leading-none text-(--brand)/[0.05] lg:block" aria-hidden="true">
+            Fechas
           </p>
         </header>
 
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        {/* Filtro por asignatura (correlación con las páginas de curso) */}
+        <div className="mt-8 flex flex-wrap items-center gap-1.5" role="navigation" aria-label="Filtrar agenda por asignatura">
+          <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft">
+            Filtrar:
+          </span>
+          <Link
+            href={agendHref(cursorMonth, null)}
+            className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition ${
+              !activeCourseFilter
+                ? "border-ink bg-ink text-paper"
+                : "border-ink/15 text-ink-soft hover:border-(--brand) hover:text-(--brand)"
+            }`}
+          >
+            Todos
+          </Link>
+          {publicCourses.map((course) => (
+            <Link
+              key={course.id}
+              href={agendHref(cursorMonth, course.code)}
+              className={`rounded-full border px-3.5 py-1.5 font-mono text-[11px] font-medium transition ${
+                activeCourseFilter === course.code
+                  ? "border-(--brand) bg-(--brand) text-paper"
+                  : "border-ink/15 text-ink-soft hover:border-(--brand) hover:text-(--brand)"
+              }`}
+              aria-current={activeCourseFilter === course.code ? "true" : undefined}
+            >
+              {course.code}
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
           {/* Calendario mensual */}
           <section aria-labelledby="cal-h">
             <div className="flex items-center justify-between">
               <h2 id="cal-h" className="font-display text-2xl font-semibold capitalize">
-                {MONTH_NAMES[cursor.month - 1]} {cursor.year}
+                {MONTH_NAMES[cursorMonth.month - 1]} {cursorMonth.year}
               </h2>
               <div className="flex items-center gap-1.5">
                 <Link
-                  href={monthHref(prev)}
+                  href={agendHref(prev)}
                   aria-label={`Mes anterior: ${MONTH_NAMES[prev.month - 1]} ${prev.year}`}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/15 transition hover:border-(--brand) hover:text-(--brand)"
                 >
@@ -191,7 +242,7 @@ export default async function PublicAgendaPage({
                   Hoy
                 </Link>
                 <Link
-                  href={monthHref(next)}
+                  href={agendHref(next)}
                   aria-label={`Mes siguiente: ${MONTH_NAMES[next.month - 1]} ${next.year}`}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/15 transition hover:border-(--brand) hover:text-(--brand)"
                 >
@@ -203,7 +254,8 @@ export default async function PublicAgendaPage({
             <div className="mt-5 overflow-hidden rounded-2xl border border-ink/10">
               <table className="w-full table-fixed border-collapse">
                 <caption className="sr-only">
-                  Calendario de {MONTH_NAMES[cursor.month - 1]} de {cursor.year}
+                  Calendario de {MONTH_NAMES[cursorMonth.month - 1]} de {cursorMonth.year}
+                  {activeCourseFilter ? `, filtrado por ${activeCourseFilter}` : ""}
                 </caption>
                 <thead>
                   <tr className="border-b border-ink/10 bg-paper-deep/70">
@@ -259,7 +311,6 @@ export default async function PublicAgendaPage({
                               {cell.date.getDate()}
                             </div>
                             <div className="mt-1 space-y-1">
-                              {/* Puntos (siempre) — compañeros accesibles de las etiquetas */}
                               <div className="flex flex-wrap justify-center gap-1 sm:hidden">
                                 {dayEvents.slice(0, 4).map((event) => (
                                   <span
@@ -319,7 +370,8 @@ export default async function PublicAgendaPage({
             </h2>
             {upcoming.length === 0 ? (
               <p className="mt-5 rounded-2xl border border-dashed border-ink/15 px-5 py-10 text-center text-sm italic text-ink-soft">
-                No hay eventos programados próximamente.
+                No hay eventos programados próximamente{" "}
+                {activeCourseFilter ? `para ${activeCourseFilter}` : ""}.
               </p>
             ) : (
               <ol className="mt-5 space-y-3">
@@ -390,7 +442,7 @@ export default async function PublicAgendaPage({
         </div>
       </main>
 
-      <PublicFooter profile={profile} />
+      <PublicFooter profile={profile} settings={settings} />
     </div>
   );
 }

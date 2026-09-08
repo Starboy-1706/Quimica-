@@ -33,6 +33,11 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Las secciones ancladas no quedan ocultas bajo la cabecera fija */
+main [id] {
+  scroll-margin-top: 5.5rem;
+}
+
 /* Accesibilidad: foco siempre visible con teclado */
 :focus-visible {
   outline: 2px solid var(--color-gold);

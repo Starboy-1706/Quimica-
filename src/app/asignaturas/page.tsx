@@ -20,13 +20,13 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "Asignaturas",
   description:
-    "Listado de asignaturas de química del Prof. Wilmer Molina, agrupadas por nivel (grado, máster, doctorado) y semestre.",
+    "Listado de asignaturas agrupadas por nivel y semestre, con acceso a cada aula, programa, horarios y repositorio descargable.",
 };
 
 const LEVEL_ORDER: CourseLevel[] = ["grado", "master", "doctorado"];
 
 const LEVEL_DESCRIPTIONS: Record<CourseLevel, string> = {
-  grado: "Cursos de pregrado del plan de estudios de Química.",
+  grado: "Cursos de pregrado del plan de estudios.",
   master: "Seminarios y cursos de profundización del programa de máster.",
   doctorado: "Seminarios avanzados y trabajos de investigación doctoral.",
 };
@@ -47,6 +47,10 @@ export default async function PublicCoursesPage() {
     }),
   ]);
 
+  const institutionName =
+    profile?.department ?? settings.institution_name ?? "Departamento de Química";
+  const academicTerm = settings.academic_term ?? "";
+
   // Agrupación: nivel → semestre → cursos
   const grouped = LEVEL_ORDER.map((level) => {
     const ofLevel = activeCourses.filter((course) => course.level === level);
@@ -62,20 +66,24 @@ export default async function PublicCoursesPage() {
 
   return (
     <div className="min-h-screen bg-paper text-ink" style={brandVars(settings)}>
-      <PublicNav active="asignaturas" profile={profile} />
+      <PublicNav active="asignaturas" profile={profile} settings={settings} />
 
       <main id="contenido" className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-        <header className="max-w-2xl">
+        <header className="relative max-w-2xl">
           <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-(--brand)">
-            Departamento de Química
+            {institutionName}
+            {academicTerm ? ` · Período ${academicTerm}` : ""}
           </p>
-          <h1 className="mt-3 font-display text-4xl font-semibold sm:text-5xl">
+          <h1 className="mt-3 font-display text-4xl font-semibold leading-tight sm:text-6xl">
             Asignaturas
           </h1>
           <p className="mt-4 text-lg leading-relaxed text-ink-soft">
             Materias activas del período, agrupadas por nivel y semestre.
             Entra a cada aula para consultar el programa, los horarios, los
             avisos y el repositorio descargable.
+          </p>
+          <p className="pointer-events-none absolute -top-4 right-0 hidden select-none font-display text-[7rem] font-black italic leading-none text-(--brand)/[0.05] lg:block" aria-hidden="true">
+            Cursos
           </p>
         </header>
 
@@ -84,14 +92,17 @@ export default async function PublicCoursesPage() {
             No hay asignaturas publicadas en este momento.
           </p>
         ) : (
-          grouped.map((group) => (
+          grouped.map((group, groupIndex) => (
             <section
               key={group.level}
               aria-labelledby={`nivel-${group.level}`}
               className="mt-14"
             >
-              <div className="flex items-end justify-between border-b-2 border-ink pb-3">
+              <div className="flex items-end justify-between border-b-2 border-ink pb-4">
                 <div className="flex items-center gap-3">
+                  <span className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
+                    {String(groupIndex + 1).padStart(2, "0")}
+                  </span>
                   <GraduationCap
                     className="h-5 w-5 text-(--brand)"
                     strokeWidth={1.75}
@@ -114,12 +125,12 @@ export default async function PublicCoursesPage() {
                   <h3 className="font-mono text-[11px] uppercase tracking-[0.28em] text-(--brand-2)">
                     Semestre {term}
                   </h3>
-                  <ul className="mt-3 divide-y divide-ink/10 rounded-2xl border border-ink/10">
+                  <ul className="mt-3 divide-y divide-ink/10 rounded-2xl border border-ink/10 bg-paper">
                     {termCourses.map((course) => (
                       <li key={course.id}>
                         <Link
                           href={`/cursos/${course.slug}`}
-                          className="group flex items-center gap-4 px-5 py-4 transition hover:bg-paper-deep/60 sm:gap-6 sm:px-6 sm:py-5"
+                          className="group flex items-center gap-4 px-5 py-4 transition hover:translate-x-1 hover:bg-paper-deep/60 sm:gap-6 sm:px-6 sm:py-5"
                         >
                           <span className="hidden shrink-0 rounded-full border border-(--brand)/40 px-3 py-1 font-mono text-[11px] font-medium tracking-wider text-(--brand) sm:inline">
                             {course.code}
@@ -162,7 +173,7 @@ export default async function PublicCoursesPage() {
         )}
       </main>
 
-      <PublicFooter profile={profile} />
+      <PublicFooter profile={profile} settings={settings} />
     </div>
   );
 }

@@ -70,7 +70,7 @@ export default async function AdminLoginPage({
           </ul>
         </div>
 
-        <p className="relative font-mono text-[10px] uppercase tracking-[0.3em] of text-muted">
+        <p className="relative font-mono text-[10px] uppercase tracking-[0.3em] text-muted">
           Consola Docente · Control Total
         </p>
       </section>

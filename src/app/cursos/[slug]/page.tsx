@@ -264,10 +264,11 @@ export default async function PublicCoursePage({ params }: Params) {
                   Avisos de la asignatura
                 </h2>
                 <Link
-                  href="/agenda"
+                  href={`/agenda?curso=${encodeURIComponent(course.code)}`}
                   className="inline-flex items-center gap-1 text-xs text-ink-soft transition hover:text-(--brand)"
+                  title="Ver la agenda filtrada por esta asignatura"
                 >
-                  Ver agenda <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+                  Ver agenda del curso <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
                 </Link>
               </div>
               {announcements.length === 0 ? (
@@ -459,6 +460,18 @@ export default async function PublicCoursePage({ params }: Params) {
               )}
             </aside>
 
+            {/* Agenda del curso */}
+            <Link
+              href={`/agenda?curso=${encodeURIComponent(course.code)}`}
+              className="group flex items-center justify-between rounded-2xl border border-ink/10 px-6 py-4 transition hover:border-(--brand)/50 hover:bg-paper-deep/50"
+            >
+              <span className="flex items-center gap-2.5 text-sm font-medium">
+                <CalendarClock className="h-4 w-4 text-(--brand)" aria-hidden="true" />
+                Agenda de esta asignatura
+              </span>
+              <ArrowUpRight className="h-4 w-4 text-ink-soft transition group-hover:text-(--brand)" aria-hidden="true" />
+            </Link>
+
             {/* Ficha rápida */}
             <aside
               aria-labelledby="ficha-c"
@@ -486,13 +499,27 @@ export default async function PublicCoursePage({ params }: Params) {
               </dl>
             </aside>
 
-            <Link
-              href="/asignaturas"
-              className="inline-flex items-center gap-2 text-sm text-ink-soft transition hover:text-(--brand)"
-            >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Volver al listado de asignaturas
-            </Link>
+            <div className="rounded-2xl border border-ink/10 bg-paper-deep/40 p-6">
+              <p className="font-mono text-[10px] uppercase tracking-[0.24em] text-(--brand-2)">
+                Continuar explorando
+              </p>
+              <div className="mt-3 flex flex-col gap-2.5">
+                <Link
+                  href="/asignaturas"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-ink transition hover:text-(--brand)"
+                >
+                  <ArrowLeft className="h-4 w-4 transition group-hover:-translate-x-0.5" aria-hidden="true" />
+                  Listado completo de asignaturas
+                </Link>
+                <Link
+                  href="/#consultas"
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-ink transition hover:text-(--brand)"
+                >
+                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                  Enviar una consulta al docente
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </main>

@@ -132,16 +132,40 @@ export function PublicFooter({
     profile?.department ?? settings?.institution_name ?? "Departamento de Química"
   } · Aula docente con gestión auditada de contenidos.`;
 
+  const footerLinks = [
+    { href: "/", label: "Inicio" },
+    { href: "/asignaturas", label: "Asignaturas" },
+    { href: "/agenda", label: "Agenda" },
+    { href: "/#avisos", label: "Avisos" },
+    { href: "/#consultas", label: "Consulta directa" },
+  ];
+
   return (
     <footer className="border-t border-ink/10" role="contentinfo">
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-5 py-8 text-xs text-ink-soft sm:flex-row sm:items-center sm:px-8">
-        <p>{settings?.footer_text || defaultText}</p>
-        <Link
-          href="/admin"
-          className="inline-flex items-center gap-1.5 transition hover:text-ink"
-        >
-          Panel docente <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
-        </Link>
+      <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8">
+        <nav aria-label="Mapa del sitio" className="mb-6">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft">
+            {footerLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="transition hover:text-(--brand)"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <div className="flex flex-col items-start justify-between gap-4 border-t border-ink/10 pt-6 text-xs text-ink-soft sm:flex-row sm:items-center">
+          <p>{settings?.footer_text || defaultText}</p>
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 transition hover:text-ink"
+          >
+            Panel docente <ArrowUpRight className="h-3 w-3" aria-hidden="true" />
+          </Link>
+        </div>
       </div>
     </footer>
   );
