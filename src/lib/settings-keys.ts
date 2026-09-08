@@ -47,8 +47,8 @@ export const SITE_SETTING_DESCRIPTIONS: Record<SiteSettingKey, string> = {
   // Portada / Hero
   hero_bg_word: "Palabra de fondo en la portada (marca de agua)",
   hero_badge: "Etiqueta superior en la portada",
-  hero_image_url: "URL de la fotografía principal de portada (laboratorio)",
-  about_image_url: "URL de la fotografía de la sección docente",
+  hero_image_url: "Imagen de portada importada desde el dispositivo",
+  about_image_url: "Imagen de la sección docente importada desde el dispositivo",
   // Títulos y subtítulos de secciones públicas
   section_courses_title: "Título de la sección de asignaturas",
   section_courses_subtitle: "Descripción de la sección de asignaturas",

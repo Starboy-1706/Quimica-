@@ -1,115 +1,165 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowLeft,
-  GraduationCap,
-  History,
-  KeyRound,
+  CheckCircle2,
+  FlaskConical,
+  LockKeyhole,
+  Palette,
   ShieldCheck,
-  Sparkles,
 } from "lucide-react";
-import { LoginForm } from "@/components/admin/forms";
+import { IntuitiveLoginForm } from "@/components/admin/login-form";
+import {
+  getProfessorPublicProfile,
+  getSiteSettingsMap,
+} from "@/server/queries";
 
-export const metadata: Metadata = { title: "Acceso al panel docente" };
+export const metadata: Metadata = {
+  title: "Acceso al panel docente",
+  robots: { index: false, follow: false },
+};
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminLoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ next?: string }>;
 }) {
-  const { next } = await searchParams;
+  const [{ next }, settings, profile] = await Promise.all([
+    searchParams,
+    getSiteSettingsMap(),
+    getProfessorPublicProfile(),
+  ]);
+
+  const teacherName = profile?.user.fullName ?? "Wilmer Molina";
+  const institution =
+    profile?.department ??
+    settings.institution_name ??
+    "Departamento de Química";
+  const siteTitle = settings.site_title ?? "Aula Docente";
+  const brand = settings.brand_primary || "#0f5e5b";
 
   return (
-    <main className="grid min-h-screen bg-night text-cream lg:grid-cols-[1.1fr_1fr]">
-      {/* Panel identitario */}
-      <section className="relative hidden flex-col justify-between overflow-hidden border-r border-line bg-coal p-12 lg:flex">
-        <p className="pointer-events-none absolute -bottom-10 left-6 select-none font-display text-[11rem] font-black italic leading-none text-cream/[0.04]">
-          Aula
-        </p>
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-sand transition hover:text-cream"
-        >
-          <ArrowLeft className="h-4 w-4" /> Volver al sitio público
-        </Link>
+    <main
+      className="relative min-h-dvh overflow-hidden bg-night text-cream"
+      style={{ "--login-brand": brand } as CSSProperties}
+    >
+      {/* Fondo abstracto: no usa ninguna imagen externa */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -left-32 -top-32 h-96 w-96 rounded-full border border-brass/10" />
+        <div className="absolute -left-16 -top-16 h-64 w-64 rounded-full border border-brass/10" />
+        <div className="absolute bottom-[-10rem] right-[-8rem] h-[28rem] w-[28rem] rounded-full bg-[radial-gradient(circle,var(--login-brand),transparent_68%)] opacity-20" />
+        <div className="absolute inset-0 opacity-[0.035] [background-image:radial-gradient(circle,#f2ead4_1px,transparent_1px)] [background-size:22px_22px]" />
+      </div>
 
-        <div className="relative">
-          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brass text-night">
-            <GraduationCap className="h-6 w-6" strokeWidth={1.75} />
-          </span>
-          <h1 className="mt-8 max-w-md font-display text-4xl font-semibold leading-tight">
-            Panel de administración{" "}
-            <span className="italic text-brass">del docente</span>.
-          </h1>
-          <ul className="mt-10 space-y-5 text-sm text-sand">
-            {[
-              {
-                icon: KeyRound,
-                title: "Acceso directo por contraseña",
-                body: "Ingresa con tu clave maestra de forma rápida sin requerir correo.",
-              },
-              {
-                icon: Sparkles,
-                title: "Personalización completa",
-                body: "Edita textos, imágenes, títulos, horarios y colores institucionales.",
-              },
-              {
-                icon: ShieldCheck,
-                title: "Gestión de correo y avisos",
-                body: "Configura Resend, alertas estudiantiles y publicaciones al instante.",
-              },
-            ].map(({ icon: Icon, title, body }) => (
-              <li key={title} className="flex gap-4">
-                <Icon className="mt-0.5 h-5 w-5 shrink-0 text-brass" strokeWidth={1.75} />
-                <div>
-                  <p className="font-medium text-cream">{title}</p>
-                  <p className="mt-1 leading-relaxed text-muted">{body}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <p className="relative font-mono text-[10px] uppercase tracking-[0.3em] text-muted">
-          Consola Docente · Control Total
-        </p>
-      </section>
-
-      {/* Formulario de contraseña */}
-      <section className="flex items-center justify-center px-5 py-16">
-        <div className="w-full max-w-sm">
+      <div className="relative mx-auto grid min-h-dvh max-w-7xl grid-cols-1 lg:grid-cols-[1.1fr_0.9fr]">
+        {/* Contexto e identidad */}
+        <section className="flex flex-col px-5 pb-10 pt-5 sm:px-10 sm:pt-8 lg:justify-between lg:px-16 lg:py-12">
           <Link
             href="/"
-            className="mb-10 inline-flex items-center gap-2 text-sm text-sand transition hover:text-cream lg:hidden"
+            className="inline-flex min-h-11 w-fit items-center gap-2 rounded-full border border-line px-4 text-sm text-sand transition hover:border-brass/50 hover:text-cream"
           >
-            <ArrowLeft className="h-4 w-4" /> Sitio público
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            Volver al sitio público
           </Link>
-          <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-brass">
-            Acceso interno
-          </p>
-          <h2 className="mt-3 font-display text-3xl font-semibold">
-            Entrar al panel
-          </h2>
-          <p className="mt-2 text-sm text-muted">
-            Introduce la contraseña de acceso.
-          </p>
 
-          <LoginForm next={typeof next === "string" ? next : ""} />
+          <div className="mt-12 max-w-xl lg:mt-0">
+            <div className="flex items-center gap-3">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brass text-night shadow-[0_12px_30px_-12px_rgba(220,166,63,0.7)]">
+                <FlaskConical className="h-6 w-6" strokeWidth={1.75} />
+              </span>
+              <div className="leading-tight">
+                <p className="font-display text-xl font-semibold">{siteTitle}</p>
+                <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.25em] text-muted">
+                  {institution}
+                </p>
+              </div>
+            </div>
 
-          <div className="mt-8 rounded-xl border border-line bg-panel p-4 text-xs leading-relaxed text-muted">
-            <p className="font-medium text-sand">Contraseña inicial</p>
-            <p className="mt-1">
-              Clave de acceso por defecto:
+            <p className="mt-10 font-mono text-[10px] uppercase tracking-[0.3em] text-brass">
+              Área privada · {teacherName}
             </p>
-            <p className="mt-2 font-mono text-[12px] text-brass font-bold">
-              Aula#2026
+            <h1 className="mt-4 max-w-lg font-display text-4xl font-semibold leading-[1.08] sm:text-5xl">
+              Todo tu portal docente,
+              <span className="block italic text-brass">en un solo lugar.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-muted sm:text-base">
+              Publica asignaturas, organiza materiales, responde consultas y
+              personaliza la experiencia de tus estudiantes.
             </p>
-            <p className="mt-1.5 text-[11px] text-muted">
-              Puedes cambiar esta contraseña en cualquier momento desde el menú <strong>Ajustes</strong> del panel.
-            </p>
+
+            <ul className="mt-8 hidden grid-cols-3 gap-3 sm:grid" role="list">
+              {[
+                {
+                  icon: CheckCircle2,
+                  title: "Contenido",
+                  text: "Cursos y materiales",
+                },
+                {
+                  icon: Palette,
+                  title: "Diseño",
+                  text: "Textos e imágenes",
+                },
+                {
+                  icon: ShieldCheck,
+                  title: "Control",
+                  text: "Acceso auditado",
+                },
+              ].map((item) => (
+                <li
+                  key={item.title}
+                  className="rounded-2xl border border-line bg-panel/50 p-4"
+                >
+                  <item.icon className="h-4 w-4 text-brass" aria-hidden="true" />
+                  <p className="mt-3 text-xs font-medium text-cream">
+                    {item.title}
+                  </p>
+                  <p className="mt-0.5 text-[10px] text-muted">{item.text}</p>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      </section>
+
+          <p className="mt-10 hidden font-mono text-[9px] uppercase tracking-[0.25em] text-muted lg:block">
+            Consola docente · Acceso seguro
+          </p>
+        </section>
+
+        {/* Acción principal */}
+        <section className="flex items-center justify-center px-5 pb-10 sm:px-10 lg:border-l lg:border-line lg:bg-coal/55 lg:py-12">
+          <div className="w-full max-w-md rounded-[1.75rem] border border-line bg-coal p-5 shadow-[0_28px_80px_-32px_rgba(0,0,0,0.85)] sm:p-8">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-mono text-[10px] uppercase tracking-[0.28em] text-brass">
+                  Paso único
+                </p>
+                <h2 className="mt-2 font-display text-3xl font-semibold">
+                  Bienvenido
+                </h2>
+                <p className="mt-2 text-sm leading-relaxed text-muted">
+                  Escribe tu contraseña para continuar.
+                </p>
+              </div>
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-line bg-lift text-brass">
+                <LockKeyhole className="h-5 w-5" aria-hidden="true" />
+              </span>
+            </div>
+
+            <IntuitiveLoginForm
+              next={typeof next === "string" ? next : ""}
+            />
+
+            <div className="mt-6 border-t border-line pt-5 text-center">
+              <p className="text-[11px] leading-relaxed text-muted">
+                Puedes cambiar la clave después desde{" "}
+                <span className="font-medium text-sand">Ajustes → Contraseña</span>.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

@@ -7,6 +7,16 @@
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024; // 25 MB
 export const MAX_BULK_FILES = 20;
 
+/** Imágenes editoriales del sitio: límite específico y formatos web seguros. */
+export const MAX_SITE_IMAGE_BYTES = 8 * 1024 * 1024; // 8 MB
+export const SITE_IMAGE_TYPES: Record<string, string[]> = {
+  png: ["image/png"],
+  jpg: ["image/jpeg"],
+  jpeg: ["image/jpeg"],
+  webp: ["image/webp"],
+};
+export const SITE_IMAGE_EXTENSIONS = Object.keys(SITE_IMAGE_TYPES);
+
 /** Extensiones permitidas → MIME types aceptados. */
 export const ALLOWED_UPLOAD_TYPES: Record<string, string[]> = {
   pdf: ["application/pdf"],
@@ -31,6 +41,7 @@ export const ALLOWED_UPLOAD_TYPES: Record<string, string[]> = {
   png: ["image/png"],
   jpg: ["image/jpeg"],
   jpeg: ["image/jpeg"],
+  webp: ["image/webp"],
 };
 
 export const ALLOWED_UPLOAD_EXTENSIONS = Object.keys(ALLOWED_UPLOAD_TYPES);
@@ -66,6 +77,7 @@ export const MAGIC_SIGNATURES: Array<{ ext: string[]; bytes: number[] }> = [
   { ext: ["ppt", "doc", "xls"], bytes: [0xd0, 0xcf, 0x11, 0xe0] }, // OLE Compound
   { ext: ["png"], bytes: [0x89, 0x50, 0x4e, 0x47] }, // ‰PNG
   { ext: ["jpg", "jpeg"], bytes: [0xff, 0xd8, 0xff] }, // JFIF
+  { ext: ["webp"], bytes: [0x52, 0x49, 0x46, 0x46] }, // RIFF (+ WEBP se valida en servidor)
 ];
 
 export function fileExtension(name: string): string {
@@ -106,6 +118,35 @@ export function validateUploadMeta(
     return {
       ok: false,
       error: `El tipo MIME «${mime}» no corresponde a un archivo .${ext}.`,
+    };
+  }
+  return { ok: true, ext };
+}
+
+/** Validación estricta para fotografías e imágenes del diseño público. */
+export function validateSiteImageMeta(
+  name: string,
+  mime: string,
+  size: number,
+): { ok: true; ext: string } | { ok: false; error: string } {
+  const ext = fileExtension(name);
+  if (!ext || !(ext in SITE_IMAGE_TYPES)) {
+    return {
+      ok: false,
+      error: `Formato no permitido. Selecciona una imagen ${SITE_IMAGE_EXTENSIONS.map((item) => item.toUpperCase()).join(", ")}.`,
+    };
+  }
+  if (size <= 0) return { ok: false, error: "La imagen está vacía." };
+  if (size > MAX_SITE_IMAGE_BYTES) {
+    return {
+      ok: false,
+      error: `La imagen supera el límite de ${formatBytes(MAX_SITE_IMAGE_BYTES)}.`,
+    };
+  }
+  if (!SITE_IMAGE_TYPES[ext].includes(mime)) {
+    return {
+      ok: false,
+      error: `El contenido declarado (${mime || "sin MIME"}) no corresponde a una imagen .${ext}.`,
     };
   }
   return { ok: true, ext };

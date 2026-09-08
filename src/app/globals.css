@@ -38,6 +38,55 @@ main [id] {
   scroll-margin-top: 5.5rem;
 }
 
+/* ── Experiencia táctil (iOS y Android) ─────────────────────────────── */
+
+/* Sin resplandor azul al tocar en WebKit/Chrome móvil */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/*
+ * iOS Safari hace auto-zoom al enfocar inputs con font-size < 16px.
+ * En pantallas estrechas elevamos tipografía a 16px en formularios.
+ */
+@media (max-width: 640px) {
+  input,
+  select,
+  textarea,
+  [contenteditable="true"] {
+    font-size: 16px !important;
+  }
+}
+
+/* Scrollbars discretas ocultas en barras de navegación horizontales */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Utilidades de safe-area para notch iPhone y barras de gestos Android */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.safe-left {
+  padding-left: env(safe-area-inset-left);
+}
+.safe-right {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Entradas táctiles: los targets mínimos de 44×44px (HIG Apple) / 48dp (Material) */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
 /* Accesibilidad: foco siempre visible con teclado */
 :focus-visible {
   outline: 2px solid var(--color-gold);

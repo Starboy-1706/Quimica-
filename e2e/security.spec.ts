@@ -1,5 +1,4 @@
-import { writeFileSync } from "node:fs";
-import path from "node:path";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { expect, test } from "@playwright/test";
 import { query } from "./helpers/db";
 
@@ -75,6 +74,59 @@ test.describe("robustez de subidas", () => {
     expect(response.status()).toBe(400);
     await ctx.close();
   });
+
+  test("importador de imágenes rechaza documentos PDF → 422", async ({
+    browser,
+    baseURL,
+  }) => {
+    const ctx = await browser.newContext({
+      baseURL,
+      storageState: "e2e/.auth/admin.json",
+    });
+    const response = await ctx.request.post("/api/admin/site-image", {
+      multipart: {
+        file: {
+          name: "no-es-imagen.pdf",
+          mimeType: "application/pdf",
+          buffer: VALID_PDF,
+        },
+      },
+    });
+    expect(response.status()).toBe(422);
+    expect(String((await response.json()).error)).toContain(
+      "Formato no permitido",
+    );
+    await ctx.close();
+  });
+
+  test("ajustes ofrece importación desde dispositivo y ninguna URL manual", async ({
+    browser,
+    baseURL,
+  }) => {
+    const ctx = await browser.newContext({
+      baseURL,
+      storageState: "e2e/.auth/admin.json",
+    });
+    const page = await ctx.newPage();
+    await page.goto("/admin/ajustes");
+
+    await expect(
+      page.getByText("Seleccionar desde el dispositivo").first(),
+    ).toBeVisible();
+    await expect(
+      page.locator('input[name="hero_image_url"][type="url"]'),
+    ).toHaveCount(0);
+    await expect(
+      page.locator('input[name="about_image_url"][type="url"]'),
+    ).toHaveCount(0);
+    await expect(page.locator('input[name="avatarUrl"][type="url"]')).toHaveCount(
+      0,
+    );
+    await expect(page.locator('input[name="hero_image_url"][type="hidden"]')).toHaveCount(
+      1,
+    );
+    await ctx.close();
+  });
 });
 
 test.describe("control de acceso", () => {
@@ -95,6 +147,7 @@ test.describe("control de acceso", () => {
   }) => {
     const ctx = await browser.newContext({ baseURL });
     expect((await ctx.request.post("/api/admin/upload", { multipart: { f: "x" } })).status()).toBe(401);
+    expect((await ctx.request.post("/api/admin/site-image", { multipart: { f: "x" } })).status()).toBe(401);
     expect((await ctx.request.get("/api/admin/export/respaldo")).status()).toBe(401);
     expect((await ctx.request.get("/api/admin/export/cursos")).status()).toBe(401);
     const bulk = await ctx.request.post("/api/admin/materiales/bulk", { multipart: { f: "x" } });
@@ -107,11 +160,10 @@ test.describe("control de acceso", () => {
     baseURL,
   }) => {
     // Preparar un PDF real en el Storage local y registrarlo como borrador.
-    const key = `security-draft-${Date.now().toString(36)}.pdf`;
-    writeFileSync(
-      path.join(process.cwd(), ".storage", "security-draft.pdf"),
-      VALID_PDF,
-    );
+    const localStorageDir =
+      process.env.STORAGE_DIR ?? "/tmp/aula-docente-storage";
+    mkdirSync(localStorageDir, { recursive: true });
+    writeFileSync(`${localStorageDir}/security-draft.pdf`, VALID_PDF);
     const [course] = await query<{ id: string }>(
       "SELECT id FROM courses WHERE status = 'publicado' LIMIT 1",
     );

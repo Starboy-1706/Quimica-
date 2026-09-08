@@ -163,7 +163,7 @@ con vista previa en el editor (`RichTextEditor`). Imposible inyectar HTML.
 - Validación en servidor por **extensión allowlist**, **MIME declarado**,
   **límite 25 MB** y **firma mágica** (%PDF, PK, OLE, PNG, JPEG).
 - Driver **Supabase Storage** (bucket privado + **URL firmada de 5 min**)
-  si hay credenciales; reserva local en `.storage/` para desarrollo.
+  si hay credenciales; reserva temporal en `/tmp/aula-docente-storage` para desarrollo.
 - Los archivos **nunca** se enlazan directamente: se sirven por
   `/archivos/[key]`, que exige material **publicado** (público) o sesión
   del aula (borrador/archivado); lo demás responde 404.
@@ -264,6 +264,24 @@ la `SUPABASE_SERVICE_ROLE_KEY` en el servidor y entrega **siempre** por
 `/archivos/[key]` con URLs firmadas de 5 minutos y verificación de estado
 del material: ningún cliente recibe enlaces directos al bucket.
 
+### Login intuitivo e imágenes editoriales gestionadas
+
+- `/admin/login` es un acceso de **paso único**: solo contraseña, botón
+  mostrar/ocultar, aviso de Bloq Mayús, estado de carga, errores accesibles
+  (`aria-live`) y diseño responsive sin credenciales de ejemplo expuestas.
+- Las imágenes de **portada**, **sección docente** y **foto del profesor**
+  no aceptan URLs. Se seleccionan exclusivamente desde el dispositivo del
+  administrador en `/admin/ajustes` (selector, drag & drop, vista previa,
+  reemplazo y eliminación).
+- Formatos: JPG, JPEG, PNG y WebP; máximo **8 MB**; validación doble de
+  extensión, MIME y firma binaria. API: `POST /api/admin/site-image`.
+- Se almacenan en el bucket privado y se sirven por `/imagenes/[key]`
+  únicamente si la clave está actualmente referenciada por el diseño o el
+  perfil. Una clave arbitraria devuelve 404.
+- No hay fotografías remotas ni hosts de imágenes autorizados en
+  `next.config.ts`. Si aún no se importó una imagen, el sitio muestra una
+  composición gráfica local de química sin depender de terceros.
+
 ---
 
 ## 9. Despliegue en producción (Vercel + Supabase + Resend)
@@ -322,9 +340,9 @@ build en cada push.
 - Respaldos periódicos: *Carga y respaldos → Respaldo completo* (JSON firmado).
 - Migraciones del esquema: `DATABASE_URL=<pooler> npx drizzle-kit migrate`.
 - Supervisión: `/admin/auditoria` (accesos, cambios, spam, exportaciones).
-- Si el Storage de Supabase no está configurado, la app usa automáticamente
-  almacenamiento local (`.storage/`): requiere filesystem persistente, por
-  lo que en Vercel **Supabase Storage es obligatorio** para archivos.
+- Si Supabase Storage no está configurado, la app usa un directorio temporal
+  (`/tmp/aula-docente-storage`), no persistente. Por eso en Vercel
+  **Supabase Storage es obligatorio** para conservar imágenes y archivos.
 
 ### 9.6 Flujo 100 % en la nube (GitHub Codespaces)
 

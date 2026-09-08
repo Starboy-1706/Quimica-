@@ -40,7 +40,7 @@ export const metadata: Metadata = { title: "Ajustes y Personalización" };
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
-  const currentUser = await requirePageUser(["administrador"]);
+  await requirePageUser(["administrador"]);
 
   const [values, profile, lastTouched, notifyEmail, isResendReady, senderFrom] =
     await Promise.all([
@@ -75,7 +75,10 @@ export default async function AdminSettingsPage() {
             Edita tu nombre, departamento, biografía y datos de atención a estudiantes.
           </span>
         </div>
-        <ProfessorProfileForm profile={profile ?? null} user={profile?.user ?? currentUser as any} />
+        <ProfessorProfileForm
+          profile={profile ?? null}
+          user={profile?.user ?? null}
+        />
       </Card>
 
       {/* ── SECCIÓN 2: Seguridad y Cambio de Contraseña de Acceso ── */}

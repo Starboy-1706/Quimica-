@@ -63,6 +63,19 @@ export async function updateSiteSettingsAction(
       return actionError("El correo para alertas no tiene un formato válido.");
     }
 
+    // Las imágenes editoriales solo pueden provenir del importador seguro.
+    for (const imageKey of ["hero_image_url", "about_image_url"] as const) {
+      const imageUrl = changed[imageKey];
+      if (
+        imageUrl &&
+        !/^\/imagenes\/[a-zA-Z0-9._-]+$/.test(imageUrl)
+      ) {
+        return actionError(
+          "Las imágenes deben seleccionarse desde el dispositivo usando el importador del panel.",
+        );
+      }
+    }
+
     for (const key of SITE_SETTING_KEYS) {
       await db
         .insert(siteSettings)

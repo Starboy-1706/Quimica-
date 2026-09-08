@@ -220,7 +220,7 @@ export default async function PublicAgendaPage({
           ))}
         </div>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1.5fr_1fr]">
+        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.5fr_1fr]">
           {/* Calendario mensual */}
           <section aria-labelledby="cal-h">
             <div className="flex items-center justify-between">

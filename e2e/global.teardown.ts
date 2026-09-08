@@ -38,7 +38,9 @@ export default async function globalTeardown() {
   );
 
   try {
-    rmSync(path.join(process.cwd(), ".storage", "security-draft.pdf"));
+    const localStorageDir =
+      process.env.STORAGE_DIR ?? "/tmp/aula-docente-storage";
+    rmSync(path.join(localStorageDir, "security-draft.pdf"));
   } catch {
     /* mejor esfuerzo */
   }

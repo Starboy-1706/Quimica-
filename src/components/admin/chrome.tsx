@@ -138,7 +138,7 @@ export function PanelSidebar({
         </div>
       </aside>
 
-      {/* Móvil */}
+      {/* Móvil: cabecera compacta */}
       <header className="sticky top-0 z-20 border-b border-line bg-coal/95 backdrop-blur lg:hidden">
         <div className="flex items-center gap-3 px-4 py-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brass text-night">
@@ -150,13 +150,13 @@ export function PanelSidebar({
           <form action={logoutAction} className="ml-auto">
             <button
               type="submit"
-              className="inline-flex items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs text-sand"
+              className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-xs text-sand"
             >
               <LogOut className="h-3.5 w-3.5" /> Salir
             </button>
           </form>
         </div>
-        <nav className="dark-scroll flex gap-1 overflow-x-auto px-3 pb-2">
+        <nav className="no-scrollbar flex gap-1 overflow-x-auto px-3 pb-2" aria-label="Todas las secciones">
           {items.map((item) => {
             const active = isActive(pathname, item.href, "exact" in item && item.exact);
             const showBadge = item.href === "/admin/consultas" && newMessages > 0;
@@ -164,7 +164,7 @@ export function PanelSidebar({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs ${
+                className={`flex min-h-10 shrink-0 items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs ${
                   active ? "bg-lift text-brass" : "text-sand"
                 }`}
               >
@@ -180,6 +180,51 @@ export function PanelSidebar({
           })}
         </nav>
       </header>
+
+      {/* Móvil: barra de pestañas inferior estilo app */}
+      <nav
+        aria-label="Navegación rápida"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-coal/95 backdrop-blur lg:hidden"
+        style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      >
+        <ul className="mx-auto grid max-w-md grid-cols-5" role="list">
+          {[
+            ...NAV_ITEMS.filter((item) =>
+              [
+                "/admin",
+                "/admin/cursos",
+                "/admin/materiales",
+                "/admin/avisos",
+                "/admin/consultas",
+              ].includes(item.href),
+            ),
+          ].map((item) => {
+            const active = isActive(pathname, item.href, "exact" in item && item.exact);
+            const showBadge = item.href === "/admin/consultas" && newMessages > 0;
+            return (
+              <li key={item.href} className="relative">
+                <Link
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`flex min-h-14 flex-col items-center justify-center gap-1 py-2 text-[10px] transition active:scale-[0.97] ${
+                    active ? "text-brass" : "text-sand/80"
+                  }`}
+                >
+                  <span className="relative">
+                    <item.icon className="h-5 w-5" strokeWidth={active ? 2 : 1.5} />
+                    {showBadge ? (
+                      <span className="absolute -right-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-brass px-1 font-mono text-[9px] font-bold text-night">
+                        {newMessages > 9 ? "9+" : newMessages}
+                      </span>
+                    ) : null}
+                  </span>
+                  {item.label === "Panel" ? "Inicio" : item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     </>
   );
 }

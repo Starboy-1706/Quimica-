@@ -1,13 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { useRef, useState, type DragEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
   Check,
   FileUp,
   Files,
+  ImagePlus,
   Loader2,
   Plus,
+  ShieldCheck,
   UploadCloud,
   X,
 } from "lucide-react";
@@ -15,7 +18,10 @@ import {
   ALLOWED_UPLOAD_EXTENSIONS,
   formatBytes,
   MAX_BULK_FILES,
+  MAX_SITE_IMAGE_BYTES,
   MAX_UPLOAD_BYTES,
+  SITE_IMAGE_EXTENSIONS,
+  validateSiteImageMeta,
   validateUploadMeta,
 } from "@/lib/upload-rules";
 import { MATERIAL_TYPE_LABELS } from "@/lib/format";
@@ -150,6 +156,212 @@ export function FileUploadField() {
         </p>
       ) : null}
     </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Imágenes editoriales — importación EXCLUSIVA desde el dispositivo   */
+/* ------------------------------------------------------------------ */
+
+type SiteImageInfo = UploadedInfo & { previewUrl: string };
+
+function readImagePreview(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(new Error("No se pudo previsualizar la imagen."));
+    reader.readAsDataURL(file);
+  });
+}
+
+export function SiteImageUploadField({
+  name,
+  label,
+  description,
+  currentUrl = "",
+  aspect = "landscape",
+}: {
+  name: string;
+  label: string;
+  description: string;
+  currentUrl?: string;
+  aspect?: "landscape" | "square";
+}) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(
+    currentUrl.startsWith("/imagenes/") ? currentUrl : "",
+  );
+  const [previewUrl, setPreviewUrl] = useState(
+    currentUrl.startsWith("/imagenes/") ? currentUrl : "",
+  );
+  const [fileName, setFileName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleImage(file: File | undefined) {
+    setError(null);
+    if (!file) return;
+    const meta = validateSiteImageMeta(file.name, file.type, file.size);
+    if (!meta.ok) {
+      setError(meta.error);
+      return;
+    }
+
+    setBusy(true);
+    try {
+      const localPreview = await readImagePreview(file);
+      const body = new FormData();
+      body.append("file", file);
+      const response = await fetch("/api/admin/site-image", {
+        method: "POST",
+        body,
+      });
+      const payload = (await response.json()) as SiteImageInfo & {
+        error?: string;
+      };
+      if (!response.ok) {
+        setError(payload.error ?? "No se pudo subir la imagen.");
+        return;
+      }
+      setValue(payload.url);
+      setPreviewUrl(localPreview);
+      setFileName(payload.name);
+    } catch (uploadError) {
+      setError(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Fallo de red al subir la imagen.",
+      );
+    } finally {
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
+
+  function clearImage() {
+    setValue("");
+    setPreviewUrl("");
+    setFileName("");
+    setError(null);
+  }
+
+  return (
+    <section className="overflow-hidden rounded-2xl border border-line bg-panel">
+      <input type="hidden" name={name} value={value} />
+      <div className="border-b border-line px-4 py-3.5 sm:px-5">
+        <div className="flex items-start gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brass/10 text-brass">
+            <ImagePlus className="h-4.5 w-4.5" />
+          </span>
+          <div>
+            <p className="text-sm font-medium text-cream">{label}</p>
+            <p className="mt-0.5 text-[11px] leading-relaxed text-muted">
+              {description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {previewUrl ? (
+        <div className="p-4 sm:p-5">
+          <div
+            className={`relative overflow-hidden rounded-xl border border-line bg-lift ${
+              aspect === "square" ? "aspect-square max-w-xs" : "aspect-[16/9]"
+            }`}
+          >
+            <Image
+              src={previewUrl}
+              alt={`Vista previa: ${label}`}
+              fill
+              unoptimized
+              className="object-cover"
+              sizes={aspect === "square" ? "320px" : "(max-width: 640px) 90vw, 650px"}
+            />
+            {busy ? (
+              <div className="absolute inset-0 flex items-center justify-center bg-night/70">
+                <Loader2 className="h-7 w-7 animate-spin text-brass" />
+              </div>
+            ) : null}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 text-xs text-sage">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              {fileName || "Imagen actual del portal"}
+            </span>
+            <div className="ml-auto flex gap-2">
+              <button
+                type="button"
+                onClick={() => inputRef.current?.click()}
+                disabled={busy}
+                className="touch-target inline-flex items-center gap-1.5 rounded-xl border border-line px-3 text-xs text-sand transition hover:border-brass/50 hover:text-brass"
+              >
+                <ImagePlus className="h-3.5 w-3.5" /> Reemplazar
+              </button>
+              <button
+                type="button"
+                onClick={clearImage}
+                disabled={busy}
+                className="touch-target inline-flex items-center gap-1.5 rounded-xl border border-clay/40 px-3 text-xs text-clay transition hover:bg-clay/10"
+              >
+                <X className="h-3.5 w-3.5" /> Quitar
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 sm:p-5">
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={() => !busy && inputRef.current?.click()}
+            onKeyDown={(event) =>
+              event.key === "Enter" && !busy && inputRef.current?.click()
+            }
+            onDragOver={(event) => {
+              event.preventDefault();
+              setDragging(true);
+            }}
+            onDragLeave={() => setDragging(false)}
+            onDrop={(event) => {
+              event.preventDefault();
+              setDragging(false);
+              void handleImage(event.dataTransfer.files?.[0]);
+            }}
+            className={`flex min-h-44 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 text-center transition ${
+              dragging
+                ? "border-brass bg-brass/10"
+                : "border-line bg-lift/30 hover:border-brass/50 hover:bg-lift/60"
+            }`}
+          >
+            {busy ? (
+              <Loader2 className="h-7 w-7 animate-spin text-brass" />
+            ) : (
+              <ImagePlus className="h-7 w-7 text-brass" strokeWidth={1.5} />
+            )}
+            <p className="text-sm font-medium text-cream">
+              {busy ? "Importando y protegiendo…" : "Seleccionar desde el dispositivo"}
+            </p>
+            <p className="max-w-sm text-[11px] leading-relaxed text-muted">
+              También puedes arrastrarla aquí · {SITE_IMAGE_EXTENSIONS.map((ext) => ext.toUpperCase()).join(" · ")} · máximo {formatBytes(MAX_SITE_IMAGE_BYTES)}
+            </p>
+          </div>
+        </div>
+      )}
+
+      <input
+        ref={inputRef}
+        type="file"
+        hidden
+        accept={SITE_IMAGE_EXTENSIONS.map((ext) => `.${ext}`).join(",")}
+        onChange={(event) => void handleImage(event.target.files?.[0])}
+      />
+      {error ? (
+        <p className="mx-4 mb-4 rounded-xl border border-clay/40 bg-clay/10 px-3.5 py-2.5 text-xs text-clay sm:mx-5 sm:mb-5">
+          {error}
+        </p>
+      ) : null}
+    </section>
   );
 }
 

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { ArrowUpRight, FlaskConical, LogIn } from "lucide-react";
+import { MobileMenu } from "@/components/public/mobile-menu";
 import type { ProfessorProfile, User } from "@/db/schema";
 
 export type PublicNavSection = "inicio" | "asignaturas" | "agenda";
@@ -71,6 +72,7 @@ export function PublicNav({
           </Link>
           <nav aria-label="Navegación principal">
             <ul className="flex items-center gap-1 text-sm sm:gap-2">
+              {/* Escritorio y tablet: enlaces directos */}
               {NAV_LINKS.map((link) => (
                 <li key={link.id} className="hidden sm:block">
                   <Link
@@ -86,31 +88,21 @@ export function PublicNav({
                   </Link>
                 </li>
               ))}
-              {/* Móvil: enlaces compactos */}
-              {NAV_LINKS.map((link) => (
-                <li key={`${link.id}-m`} className="sm:hidden">
-                  <Link
-                    href={link.href}
-                    aria-current={active === link.id ? "page" : undefined}
-                    className={`rounded-full px-2.5 py-1.5 text-xs font-medium transition ${
-                      active === link.id
-                        ? "bg-ink text-paper"
-                        : "text-ink-soft"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
+              <li className="hidden sm:block">
                 <Link
                   href="/admin"
                   className="inline-flex items-center gap-2 rounded-full border border-ink/15 px-3.5 py-1.5 text-xs font-medium transition hover:border-(--brand) hover:text-(--brand)"
                 >
                   <LogIn className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span className="hidden sm:inline">Acceso interno</span>
-                  <span className="sm:hidden">Interno</span>
+                  Acceso interno
                 </Link>
+              </li>
+              {/* Celular (iPhone / Android): cajón deslizante */}
+              <li className="sm:hidden">
+                <MobileMenu
+                  teacherName={teacherName}
+                  departmentName={departmentName}
+                />
               </li>
             </ul>
           </nav>

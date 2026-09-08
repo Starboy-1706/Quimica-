@@ -26,7 +26,7 @@ export default async function AdminPanelLayout({
     <div className="min-h-screen bg-night text-cream">
       <PanelSidebar user={user} newMessages={newMessages.value} />
       <main className="min-h-screen lg:pl-72">
-        <div className="mx-auto max-w-6xl px-5 py-8 sm:px-8 lg:py-10">
+        <div className="mx-auto max-w-6xl px-5 py-8 pb-28 sm:px-8 lg:py-10 lg:pb-10">
           {children}
         </div>
       </main>

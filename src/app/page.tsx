@@ -5,8 +5,11 @@ import { and, asc, desc, eq, gte, isNotNull, isNull } from "drizzle-orm";
 import {
   ArrowRight,
   ArrowUpRight,
+  Atom,
+  Beaker,
   CalendarClock,
   Clock,
+  FlaskConical,
   Lock,
   Mail,
   MapPin,
@@ -36,10 +39,10 @@ import { ContactForm } from "@/components/admin/forms";
 
 export const dynamic = "force-dynamic";
 
-const DEFAULT_LAB_HERO_URL =
-  "https://images.pexels.com/photos/5427673/pexels-photo-5427673.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200";
-const DEFAULT_LAB_GLASSWARE_URL =
-  "https://images.pexels.com/photos/8927674/pexels-photo-8927674.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200";
+/** Solo se renderizan imágenes importadas desde el panel administrativo. */
+function managedImageUrl(value: string | undefined): string | null {
+  return value?.startsWith("/imagenes/") ? value : null;
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsMap();
@@ -113,9 +116,9 @@ export default async function PublicHomePage() {
     (academicTerm
       ? `${departmentName} · Período ${academicTerm}`
       : departmentName);
-  const heroImageUrl = settings.hero_image_url || DEFAULT_LAB_HERO_URL;
-  const aboutImageUrl =
-    settings.about_image_url || DEFAULT_LAB_GLASSWARE_URL;
+  const heroImageUrl = managedImageUrl(settings.hero_image_url);
+  const aboutImageUrl = managedImageUrl(settings.about_image_url);
+  const avatarUrl = managedImageUrl(profile?.avatarUrl ?? undefined);
 
   const sectionCoursesTitle =
     settings.section_courses_title || "Asignaturas activas";
@@ -176,7 +179,7 @@ export default async function PublicHomePage() {
               {heroBgWord}
             </p>
           </div>
-          <div className="relative mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:pt-24">
+          <div className="relative mx-auto grid max-w-6xl grid-cols-1 gap-12 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:pt-24">
             <div>
               {heroBadge ? (
                 <p className="animate-rise font-mono text-[11px] uppercase tracking-[0.3em] text-(--brand)">
@@ -248,28 +251,63 @@ export default async function PublicHomePage() {
                 {/* Retrato de laboratorio + tarjeta de atención */}
             <div className="relative">
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-ink/10 ring-1 ring-(--brand)/25 ring-inset">
-                <Image
-                  src={heroImageUrl}
-                  alt="Fotografía principal del aula"
-                  fill
-                  priority
-                  sizes="(min-width: 1024px) 42vw, 100vw"
-                  className="object-cover"
-                />
-                {/* Veladura institucional para integrar la foto con la marca */}
-                <div className="absolute inset-0 bg-(--brand)/15 mix-blend-multiply" aria-hidden="true" />
-                <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" aria-hidden="true" />
-                <p className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-[0.22em] text-paper/80">
-                  Práctica de laboratorio · Aula docente
-                </p>
+                {heroImageUrl ? (
+                  <>
+                    <Image
+                      src={heroImageUrl}
+                      alt="Fotografía principal del aula importada por el docente"
+                      fill
+                      priority
+                      unoptimized
+                      sizes="(min-width: 1024px) 42vw, 100vw"
+                      className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-(--brand)/15 mix-blend-multiply" aria-hidden="true" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-ink/45 via-transparent to-transparent" aria-hidden="true" />
+                    <p className="absolute bottom-3 right-4 font-mono text-[9px] uppercase tracking-[0.22em] text-paper/80">
+                      Aula docente · {departmentName}
+                    </p>
+                  </>
+                ) : (
+                  <div className="absolute inset-0 flex items-center justify-center overflow-hidden bg-[radial-gradient(circle_at_28%_24%,color-mix(in_srgb,var(--brand)_24%,transparent),transparent_28%),linear-gradient(145deg,#ece3cd,#f8f3e8)]">
+                    <Atom className="absolute left-[12%] top-[14%] h-16 w-16 text-(--brand)/20" strokeWidth={1} aria-hidden="true" />
+                    <Beaker className="absolute bottom-[15%] right-[12%] h-20 w-20 text-(--brand-2)/25" strokeWidth={1} aria-hidden="true" />
+                    <div className="flex h-32 w-32 items-center justify-center rounded-full border border-(--brand)/20 bg-paper/60 shadow-sm backdrop-blur">
+                      <FlaskConical className="h-16 w-16 text-(--brand)" strokeWidth={1.25} aria-hidden="true" />
+                    </div>
+                    <p className="absolute bottom-5 inset-x-5 text-center font-mono text-[9px] uppercase tracking-[0.24em] text-ink-soft">
+                      Imagen pendiente · impórtala desde el panel
+                    </p>
+                  </div>
+                )}
               </div>
               <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-ink/10 bg-paper p-5 shadow-[0_18px_50px_-20px_rgba(27,23,16,0.45)] sm:mx-6">
-                <p className="font-display text-lg font-semibold">
-                  {teacherName}
-                </p>
-                <p className="mt-0.5 text-xs italic text-ink-soft">
-                  {profile?.headline ?? departmentName}
-                </p>
+                <div className="flex items-center gap-3">
+                  {avatarUrl ? (
+                    <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-paper ring-1 ring-(--brand)/30">
+                      <Image
+                        src={avatarUrl}
+                        alt={`Fotografía de ${teacherName}`}
+                        fill
+                        unoptimized
+                        sizes="48px"
+                        className="object-cover"
+                      />
+                    </span>
+                  ) : (
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-(--brand)/10 text-(--brand)">
+                      <FlaskConical className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  )}
+                  <div>
+                    <p className="font-display text-lg font-semibold">
+                      {teacherName}
+                    </p>
+                    <p className="mt-0.5 text-xs italic text-ink-soft">
+                      {profile?.headline ?? departmentName}
+                    </p>
+                  </div>
+                </div>
                 <ul className="mt-4 space-y-2.5 text-sm text-ink-soft">
                   {profile?.office ? (
                     <li className="flex items-center gap-2.5">
@@ -427,7 +465,7 @@ export default async function PublicHomePage() {
             className="border-y border-ink/10 bg-paper-deep/60"
             aria-labelledby="proximas"
           >
-            <div className="mx-auto grid max-w-6xl gap-8 px-5 py-16 sm:px-8 md:grid-cols-[1fr_1.6fr]">
+            <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 px-5 py-16 sm:px-8 md:grid-cols-[1fr_1.6fr]">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
                   02
@@ -579,7 +617,7 @@ export default async function PublicHomePage() {
         {/* ── El docente ─────────────────────────────────────────── */}
         {profile ? (
           <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8" aria-labelledby="docente-h">
-            <div className="grid gap-10 border-b-2 border-ink pb-4 md:grid-cols-[1fr_2fr]">
+            <div className="grid grid-cols-1 gap-10 border-b-2 border-ink pb-4 md:grid-cols-[1fr_2fr]">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
                   04
@@ -587,14 +625,22 @@ export default async function PublicHomePage() {
                 <h2 id="docente-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionAboutTitle}
                 </h2>
-                <div className="relative mt-6 hidden aspect-[4/3] overflow-hidden rounded-2xl border border-ink/10 md:block">
-                  <Image
-                    src={aboutImageUrl}
-                    alt="Fotografía de la sección docente"
-                    fill
-                    sizes="(min-width: 768px) 30vw, 100vw"
-                    className="object-cover"
-                  />
+                <div className="relative mt-6 hidden aspect-[4/3] overflow-hidden rounded-2xl border border-ink/10 bg-paper-deep/50 md:block">
+                  {aboutImageUrl ? (
+                    <Image
+                      src={aboutImageUrl}
+                      alt="Fotografía de la actividad docente importada desde el panel"
+                      fill
+                      unoptimized
+                      sizes="(min-width: 768px) 30vw, 100vw"
+                      className="object-cover"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_center,color-mix(in_srgb,var(--brand)_18%,transparent)_1px,transparent_1px)] [background-size:18px_18px]" />
+                      <Beaker className="relative h-16 w-16 text-(--brand)/50" strokeWidth={1.2} aria-hidden="true" />
+                    </div>
+                  )}
                 </div>
               </div>
               <div>
@@ -647,7 +693,7 @@ export default async function PublicHomePage() {
           className="mx-auto max-w-6xl px-5 pb-24 sm:px-8"
           aria-labelledby="consultas-h"
         >
-          <div className="grid gap-10 md:grid-cols-[1fr_1.4fr]">
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1.4fr]">
             <div>
               <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
                 05

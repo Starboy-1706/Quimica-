@@ -1,6 +1,5 @@
 import { randomBytes } from "node:crypto";
 import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { slugify } from "@/lib/format";
 import {
   MAGIC_SIGNATURES,
@@ -25,7 +24,8 @@ import {
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "materiales";
-const LOCAL_DIR = process.env.STORAGE_DIR ?? path.join(process.cwd(), ".storage");
+/** Fallback acotado para desarrollo/preview; Vercel usa Supabase Storage. */
+const LOCAL_DIR = process.env.STORAGE_DIR ?? "/tmp/aula-docente-storage";
 
 export function usingSupabaseStorage(): boolean {
   return Boolean(SUPABASE_URL && SUPABASE_KEY);
@@ -60,7 +60,22 @@ export function passesMagicSniff(ext: string, data: Buffer): boolean {
   const signature = MAGIC_SIGNATURES.find((sig) => sig.ext.includes(ext));
   if (!signature) return true; // formatos de texto: sin firma exigible
   if (data.length < signature.bytes.length) return false;
-  return signature.bytes.every((byte, index) => data[index] === byte);
+  const prefixMatches = signature.bytes.every(
+    (byte, index) => data[index] === byte,
+  );
+  if (!prefixMatches) return false;
+
+  // WebP requiere contenedor RIFF y marca WEBP en bytes 8–11.
+  if (ext === "webp") {
+    return (
+      data.length >= 12 &&
+      data[8] === 0x57 &&
+      data[9] === 0x45 &&
+      data[10] === 0x42 &&
+      data[11] === 0x50
+    );
+  }
+  return true;
 }
 
 /** Persiste el binario validado bajo `key`. */
@@ -79,8 +94,8 @@ export async function storeFile(
     }
     return;
   }
-  const target = path.join(LOCAL_DIR, key);
-  await mkdir(path.dirname(target), { recursive: true });
+  const target = `${LOCAL_DIR}/${key}`;
+  await mkdir(LOCAL_DIR, { recursive: true });
   await writeFile(target, data);
 }
 
@@ -104,7 +119,7 @@ export async function serveFile(key: string): Promise<ServedFile> {
     }
     return { kind: "redirect", url: data.signedUrl };
   }
-  const data = await readFile(path.join(LOCAL_DIR, key));
+  const data = await readFile(`${LOCAL_DIR}/${key}`);
   return {
     kind: "inline",
     data,
@@ -120,7 +135,7 @@ export async function removeFile(key: string): Promise<void> {
       await client.storage.from(STORAGE_BUCKET).remove([key]);
       return;
     }
-    await unlink(path.join(LOCAL_DIR, key));
+    await unlink(`${LOCAL_DIR}/${key}`);
   } catch {
     /* mejor esfuerzo */
   }

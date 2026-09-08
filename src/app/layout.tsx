@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Inter } from "next/font/google";
 import "./globals.css";
 
@@ -17,8 +17,20 @@ const inter = Inter({
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: "#0f5e5b",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
+  appleWebApp: {
+    capable: true,
+    title: "Aula Docente",
+    statusBarStyle: "default",
+  },
   title: {
     default: "Aula Docente — Prof. Wilmer Molina · Departamento de Química",
     template: "%s · Aula Docente — Prof. Wilmer Molina",

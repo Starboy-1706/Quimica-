@@ -238,7 +238,7 @@ export default async function PublicCoursePage({ params }: Params) {
           ) : null}
         </header>
 
-        <div className="mt-10 grid gap-10 lg:grid-cols-[1.7fr_1fr]">
+        <div className="mt-10 grid grid-cols-1 gap-10 lg:grid-cols-[1.7fr_1fr]">
           {/* Columna principal */}
           <div>
             {/* Información general */}

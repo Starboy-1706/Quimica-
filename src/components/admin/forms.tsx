@@ -59,7 +59,10 @@ import type {
   User,
 } from "@/db/schema";
 import { RichTextEditor } from "@/components/admin/rich-editor";
-import { FileUploadField } from "@/components/admin/upload";
+import {
+  FileUploadField,
+  SiteImageUploadField,
+} from "@/components/admin/upload";
 
 /* ------------------------------------------------------------------ */
 /* Primitivas de formulario (tema oscuro del panel)                    */
@@ -1114,28 +1117,24 @@ export function SiteSettingsForm({
             />
           </Field>
         </div>
-        <Field
-          label="URL de la fotografía principal de portada"
-          hint="URL de la foto de laboratorio/clase en el encabezado."
-        >
-          <TextInput
+        <div className="grid gap-4 lg:grid-cols-2">
+          <SiteImageUploadField
             name="hero_image_url"
-            type="url"
-            placeholder="https://images.pexels.com/..."
-            defaultValue={values.hero_image_url ?? ""}
+            label="Fotografía principal de portada"
+            description="Elige una foto horizontal desde este dispositivo. Se mostrará junto al mensaje de bienvenida."
+            currentUrl={values.hero_image_url ?? ""}
           />
-        </Field>
-        <Field
-          label="URL de la fotografía en sección docente"
-          hint="Foto de matraces/laboratorio en la sección sobre el profesor."
-        >
-          <TextInput
+          <SiteImageUploadField
             name="about_image_url"
-            type="url"
-            placeholder="https://images.pexels.com/..."
-            defaultValue={values.about_image_url ?? ""}
+            label="Fotografía de la sección docente"
+            description="Importa desde este dispositivo una imagen del laboratorio, la facultad o la actividad académica."
+            currentUrl={values.about_image_url ?? ""}
           />
-        </Field>
+        </div>
+        <p className="rounded-xl border border-brass/20 bg-brass/[0.05] px-3.5 py-2.5 text-[11px] leading-relaxed text-sand">
+          <strong className="text-brass">Privacidad:</strong>{" "}
+          no se aceptan enlaces externos. Toda imagen debe importarse explícitamente desde el dispositivo que está editando el portal.
+        </p>
       </div>
 
       {/* Grupo 3: Títulos y descripciones de las secciones públicas */}
@@ -1326,6 +1325,13 @@ export function ProfessorProfileForm({
       <Field label="Biografía breve del docente">
         <TextArea name="bio" defaultValue={profile?.bio ?? ""} />
       </Field>
+      <SiteImageUploadField
+        name="avatarUrl"
+        label="Fotografía del profesor"
+        description="Selecciona una fotografía cuadrada o vertical desde este dispositivo. Es opcional."
+        currentUrl={profile?.avatarUrl ?? ""}
+        aspect="square"
+      />
       <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Horario de atención">
           <TextInput
