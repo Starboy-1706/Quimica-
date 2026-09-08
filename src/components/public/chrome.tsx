@@ -8,8 +8,8 @@ export type PublicNavSection = "inicio" | "asignaturas" | "agenda";
 /** Variables de marca (colores institucionales de site_settings). */
 export function brandVars(settings: Record<string, string>): CSSProperties {
   return {
-    "--brand": settings.brand_primary || "#a4751f",
-    "--brand-2": settings.brand_accent || "#dca63f",
+    "--brand": settings.brand_primary || "#0f5e5b",
+    "--brand-2": settings.brand_accent || "#c9a03a",
   } as CSSProperties;
 }
 
@@ -32,10 +32,16 @@ type ProfessorInfo = (ProfessorProfile & { user: User }) | undefined;
 export function PublicNav({
   active,
   profile,
+  settings,
 }: {
   active: PublicNavSection;
   profile: ProfessorInfo;
+  settings?: Record<string, string>;
 }) {
+  const teacherName = profile?.user.fullName ?? "Prof. Wilmer Molina";
+  const departmentName =
+    profile?.department ?? settings?.institution_name ?? "Departamento de Química";
+
   return (
     <>
       <a
@@ -56,10 +62,10 @@ export function PublicNav({
             </span>
             <span className="leading-tight">
               <span className="block font-display text-base font-semibold">
-                {profile?.user.fullName ?? "Prof. Wilmer Molina"}
+                {teacherName}
               </span>
               <span className="block font-mono text-[10px] uppercase tracking-[0.22em] text-ink-soft">
-                {profile?.department ?? "Departamento de Química"}
+                {departmentName}
               </span>
             </span>
           </Link>
@@ -80,7 +86,7 @@ export function PublicNav({
                   </Link>
                 </li>
               ))}
-              {/* Móvil: iconos compactos */}
+              {/* Móvil: enlaces compactos */}
               {NAV_LINKS.map((link) => (
                 <li key={`${link.id}-m`} className="sm:hidden">
                   <Link
@@ -114,16 +120,22 @@ export function PublicNav({
   );
 }
 
-export function PublicFooter({ profile }: { profile: ProfessorInfo }) {
+export function PublicFooter({
+  profile,
+  settings,
+}: {
+  profile: ProfessorInfo;
+  settings?: Record<string, string>;
+}) {
   const year = new Date().getFullYear();
+  const defaultText = `© ${year} ${profile?.user.fullName ?? "Prof. Wilmer Molina"} · ${
+    profile?.department ?? settings?.institution_name ?? "Departamento de Química"
+  } · Aula docente con gestión auditada de contenidos.`;
+
   return (
     <footer className="border-t border-ink/10" role="contentinfo">
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 px-5 py-8 text-xs text-ink-soft sm:flex-row sm:items-center sm:px-8">
-        <p>
-          © {year} {profile?.user.fullName ?? "Prof. Wilmer Molina"} ·{" "}
-          {profile?.department ?? "Departamento de Química"} · Aula docente con
-          gestión auditada de contenidos.
-        </p>
+        <p>{settings?.footer_text || defaultText}</p>
         <Link
           href="/admin"
           className="inline-flex items-center gap-1.5 transition hover:text-ink"

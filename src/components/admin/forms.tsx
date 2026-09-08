@@ -13,6 +13,7 @@ import {
   CalendarClock,
   Check,
   ChevronDown,
+  KeyRound,
   Loader2,
   LogIn,
   Plus,
@@ -38,10 +39,10 @@ import {
 } from "@/server/actions/messages";
 import {
   sendTestEmailAction,
+  updateAdminPasswordAction,
   updateProfessorProfileAction,
   updateSiteSettingsAction,
 } from "@/server/actions/settings";
-import { SITE_SETTING_KEYS } from "@/lib/settings-keys";
 import {
   ANNOUNCEMENT_KIND_LABELS,
   COURSE_LEVEL_LABELS,
@@ -55,6 +56,7 @@ import type {
   CourseSession,
   MaterialType,
   ProfessorProfile,
+  User,
 } from "@/db/schema";
 import { RichTextEditor } from "@/components/admin/rich-editor";
 import { FileUploadField } from "@/components/admin/upload";
@@ -232,12 +234,6 @@ function useResetOnSuccess(state: ActionState) {
   return formRef;
 }
 
-/**
- * Contador que remonta los sub-componentes con estado (editor de
- * horarios, editor enriquecido, zona de subida) tras un alta con
- * éxito. Usa el patrón oficial de «ajustar estado durante el render»
- * en lugar de efectos en cascada.
- */
 function useSuccessEdition(state: ActionState): number {
   const [edition, setEdition] = useState(0);
   const [prevState, setPrevState] = useState(state);
@@ -249,7 +245,7 @@ function useSuccessEdition(state: ActionState): number {
 }
 
 /* ------------------------------------------------------------------ */
-/* Login                                                               */
+/* Login (sólo contraseña)                                            */
 /* ------------------------------------------------------------------ */
 
 export function LoginForm({ next }: { next: string }) {
@@ -257,21 +253,16 @@ export function LoginForm({ next }: { next: string }) {
   return (
     <form action={formAction} className="mt-8 space-y-4">
       <input type="hidden" name="next" value={next} />
-      <Field label="Correo institucional">
-        <TextInput
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          placeholder="nombre@aula.edu"
-        />
-      </Field>
-      <Field label="Contraseña">
+      <Field
+        label="Contraseña del panel"
+        hint="Introduce la clave de acceso de administrador."
+      >
         <TextInput
           name="password"
           type="password"
           autoComplete="current-password"
           required
+          autoFocus
           placeholder="••••••••"
         />
       </Field>
@@ -294,8 +285,52 @@ function LoginSubmit() {
       ) : (
         <LogIn className="h-4 w-4" />
       )}
-      {pending ? "Verificando…" : "Entrar al panel"}
+      {pending ? "Verificando acceso…" : "Entrar al panel"}
     </button>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Cambio de contraseña de acceso al panel                            */
+/* ------------------------------------------------------------------ */
+
+export function ChangePasswordForm() {
+  const [state, formAction] = useActionState(
+    updateAdminPasswordAction,
+    idleActionState,
+  );
+  const formRef = useResetOnSuccess(state);
+
+  return (
+    <form ref={formRef} action={formAction} className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="Nueva contraseña" hint="Mínimo 6 caracteres.">
+          <TextInput
+            name="newPassword"
+            type="password"
+            required
+            minLength={6}
+            placeholder="••••••••"
+          />
+        </Field>
+        <Field label="Confirmar nueva contraseña">
+          <TextInput
+            name="confirmPassword"
+            type="password"
+            required
+            minLength={6}
+            placeholder="••••••••"
+          />
+        </Field>
+      </div>
+      <ActionMessage
+        state={state}
+        successText="¡Contraseña de acceso actualizada correctamente!"
+      />
+      <SubmitButton icon={KeyRound} pendingLabel="Actualizando clave…">
+        Guardar nueva contraseña
+      </SubmitButton>
+    </form>
   );
 }
 
@@ -322,7 +357,7 @@ function ScheduleEditor({
   function addSession() {
     setSessions((prev) => [
       ...prev,
-      { day: "Lunes", start: "08:00", end: "10:00", room: "" },
+      { day: "Lunes", start: "10:00", end: "12:00", room: "" },
     ]);
   }
 
@@ -717,13 +752,13 @@ export function CreateUserForm() {
           </Field>
           <Field
             label="Contraseña inicial"
-            hint="Mínimo 8 caracteres. Pídele que la cambie al ingresar."
+            hint="Mínimo 6 caracteres."
           >
             <TextInput
               name="password"
               type="password"
               required
-              minLength={8}
+              minLength={6}
               autoComplete="new-password"
               placeholder="••••••••"
             />
@@ -938,49 +973,18 @@ export function PurgeButton() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Ajustes del sitio y perfil docente                                  */
+/* Ajustes del sitio: Formulario completo organizado en pestañas/secciones */
 /* ------------------------------------------------------------------ */
 
-const SITE_SETTING_LABELS: Record<
-  (typeof SITE_SETTING_KEYS)[number],
-  { label: string; hint: string; multiline?: boolean; color?: boolean }
-> = {
-  site_title: {
-    label: "Título del sitio",
-    hint: "Se muestra como titular principal de la portada.",
-  },
-  site_tagline: {
-    label: "Frase de presentación",
-    hint: "Subtítulo bajo el titular.",
-  },
-  site_description: {
-    label: "Descripción del aula",
-    hint: "Texto de contexto para visitantes.",
-    multiline: true,
-  },
-  academic_term: {
-    label: "Período académico",
-    hint: "Etiqueta visible en la portada, p. ej. 2026-I.",
-  },
-  brand_primary: {
-    label: "Color primario institucional",
-    hint: "Títulos, botones y detalles principales del sitio público.",
-    color: true,
-  },
-  brand_accent: {
-    label: "Color de acento institucional",
-    hint: "Resaltes, números de sección y detalles editoriales.",
-    color: true,
-  },
-  notify_email: {
-    label: "Correo para alertas de consultas",
-    hint: "Aquí llegan las notificaciones automáticas de nuevas consultas de estudiantes.",
-  },
-};
-
-function ColorField({ name, defaultValue }: { name: string; defaultValue: string }) {
-  const [value, setValue] = useState(defaultValue || "#a4751f");
-  const normalized = /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#a4751f";
+function ColorField({
+  name,
+  defaultValue,
+}: {
+  name: string;
+  defaultValue: string;
+}) {
+  const [value, setValue] = useState(defaultValue || "#0f5e5b");
+  const normalized = /^#[0-9a-fA-F]{6}$/.test(value) ? value : "#0f5e5b";
   return (
     <div className="flex items-center gap-2.5">
       <input
@@ -995,7 +999,7 @@ function ColorField({ name, defaultValue }: { name: string; defaultValue: string
         value={value}
         onChange={(event) => setValue(event.target.value)}
         pattern="#[0-9a-fA-F]{6}"
-        placeholder="#a4751f"
+        placeholder="#0f5e5b"
         className={`${inputClasses} flex-1 font-mono`}
       />
       <span
@@ -1012,34 +1016,276 @@ export function SiteSettingsForm({
 }: {
   values: Record<string, string>;
 }) {
-  const [state, formAction] = useActionState(updateSiteSettingsAction, idleActionState);
+  const [state, formAction] = useActionState(
+    updateSiteSettingsAction,
+    idleActionState,
+  );
 
   return (
-    <form action={formAction} className="space-y-4">
-      {SITE_SETTING_KEYS.map((key) => {
-        const meta = SITE_SETTING_LABELS[key];
-        return (
-          <Field key={key} label={meta.label} hint={meta.hint}>
-            {meta.color ? (
-              <ColorField name={key} defaultValue={values[key] ?? ""} />
-            ) : meta.multiline ? (
-              <TextArea name={key} defaultValue={values[key] ?? ""} />
-            ) : (
-              <TextInput name={key} defaultValue={values[key] ?? ""} />
-            )}
+    <form action={formAction} className="space-y-6">
+      {/* Grupo 1: Identidad general */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          1. Identidad y Textos Principales
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Título de la portada"
+            hint="Titular principal visible en grande."
+          >
+            <TextInput
+              name="site_title"
+              defaultValue={values.site_title ?? "La química, explicada con rigor"}
+              required
+            />
           </Field>
-        );
-      })}
-      <ActionMessage state={state} />
-      <SubmitButton>Guardar ajustes</SubmitButton>
+          <Field
+            label="Período académico"
+            hint="Ej. 2026-I, 2026-II."
+          >
+            <TextInput
+              name="academic_term"
+              defaultValue={values.academic_term ?? "2026-I"}
+            />
+          </Field>
+        </div>
+        <Field
+          label="Lema o frase de presentación"
+          hint="Subtítulo que acompaña al titular de la portada."
+        >
+          <TextInput
+            name="site_tagline"
+            defaultValue={values.site_tagline ?? ""}
+          />
+        </Field>
+        <Field
+          label="Descripción del portal"
+          hint="Texto de bienvenida y contexto general."
+        >
+          <TextArea
+            name="site_description"
+            defaultValue={values.site_description ?? ""}
+          />
+        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Institución / Facultad"
+            hint="Ej. Departamento de Química · Facultad de Ciencias."
+          >
+            <TextInput
+              name="institution_name"
+              defaultValue={values.institution_name ?? ""}
+            />
+          </Field>
+          <Field
+            label="Texto del pie de página"
+            hint="Si se deja vacío, se genera automáticamente."
+          >
+            <TextInput
+              name="footer_text"
+              defaultValue={values.footer_text ?? ""}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Grupo 2: Portada, imágenes y marca de agua */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          2. Portada, Imágenes y Marca de Agua
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Palabra de fondo (Marca de agua gigante)"
+            hint="Texto que aparece de fondo en el encabezado (ej. Química, Física, Matemáticas)."
+          >
+            <TextInput
+              name="hero_bg_word"
+              defaultValue={values.hero_bg_word ?? "Química"}
+            />
+          </Field>
+          <Field
+            label="Etiqueta superior en portada"
+            hint="Texto pequeño en la cabecera (ej. Departamento de Química)."
+          >
+            <TextInput
+              name="hero_badge"
+              defaultValue={values.hero_badge ?? ""}
+            />
+          </Field>
+        </div>
+        <Field
+          label="URL de la fotografía principal de portada"
+          hint="URL de la foto de laboratorio/clase en el encabezado."
+        >
+          <TextInput
+            name="hero_image_url"
+            type="url"
+            placeholder="https://images.pexels.com/..."
+            defaultValue={values.hero_image_url ?? ""}
+          />
+        </Field>
+        <Field
+          label="URL de la fotografía en sección docente"
+          hint="Foto de matraces/laboratorio en la sección sobre el profesor."
+        >
+          <TextInput
+            name="about_image_url"
+            type="url"
+            placeholder="https://images.pexels.com/..."
+            defaultValue={values.about_image_url ?? ""}
+          />
+        </Field>
+      </div>
+
+      {/* Grupo 3: Títulos y descripciones de las secciones públicas */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          3. Títulos y Subtítulos de Secciones Públicas
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Sección 1: Título Asignaturas">
+            <TextInput
+              name="section_courses_title"
+              defaultValue={values.section_courses_title ?? "Asignaturas activas"}
+            />
+          </Field>
+          <Field label="Sección 1: Subtítulo Asignaturas">
+            <TextInput
+              name="section_courses_subtitle"
+              defaultValue={values.section_courses_subtitle ?? ""}
+            />
+          </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Sección 2: Título Agenda / Evaluaciones">
+            <TextInput
+              name="section_agenda_title"
+              defaultValue={values.section_agenda_title ?? "Próximas evaluaciones"}
+            />
+          </Field>
+          <Field label="Sección 2: Subtítulo Agenda">
+            <TextInput
+              name="section_agenda_subtitle"
+              defaultValue={values.section_agenda_subtitle ?? ""}
+            />
+          </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Sección 3: Título Tablón de Avisos">
+            <TextInput
+              name="section_announcements_title"
+              defaultValue={values.section_announcements_title ?? "Tablón de avisos"}
+            />
+          </Field>
+          <Field label="Sección 4: Título Sobre el Docente">
+            <TextInput
+              name="section_about_title"
+              defaultValue={values.section_about_title ?? "El docente"}
+            />
+          </Field>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field label="Sección 5: Título Consulta Directa">
+            <TextInput
+              name="section_contact_title"
+              defaultValue={values.section_contact_title ?? "Consulta directa"}
+            />
+          </Field>
+          <Field label="Sección 5: Subtítulo Contacto">
+            <TextInput
+              name="section_contact_subtitle"
+              defaultValue={values.section_contact_subtitle ?? ""}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Grupo 4: Colores institucionales */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          4. Colores Institucionales Personalizables
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Color Primario (Hexadecimal)"
+            hint="Títulos, botones principales e insignias."
+          >
+            <ColorField
+              name="brand_primary"
+              defaultValue={values.brand_primary ?? "#0f5e5b"}
+            />
+          </Field>
+          <Field
+            label="Color de Acento (Hexadecimal)"
+            hint="Resaltes, numeración editorial y avisos."
+          >
+            <ColorField
+              name="brand_accent"
+              defaultValue={values.brand_accent ?? "#c9a03a"}
+            />
+          </Field>
+        </div>
+      </div>
+
+      {/* Grupo 5: Notificaciones y Resend */}
+      <div className="space-y-4 rounded-xl border border-line bg-lift/30 p-4">
+        <p className="font-display text-base font-semibold text-cream">
+          5. Configuración de Correo y Resend
+        </p>
+        <Field
+          label="Resend API Key"
+          hint="Introduce aquí tu clave de Resend (re_...) para no depender de variables de entorno."
+        >
+          <TextInput
+            name="resend_api_key"
+            type="password"
+            autoComplete="off"
+            placeholder="re_xxxxxxxxxxxxxxxxxxxx"
+            defaultValue={values.resend_api_key ?? ""}
+          />
+        </Field>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="Remitente de correos (From)"
+            hint="Ej. Aula Docente <onboarding@resend.dev> o tu dominio verificado."
+          >
+            <TextInput
+              name="resend_from"
+              placeholder="Aula Docente <onboarding@resend.dev>"
+              defaultValue={values.resend_from ?? ""}
+            />
+          </Field>
+          <Field
+            label="Correo para alertas de consultas"
+            hint="Buzón donde recibirás los avisos de nuevas dudas enviadas por alumnos."
+          >
+            <TextInput
+              name="notify_email"
+              type="email"
+              placeholder="profesor@universidad.edu"
+              defaultValue={values.notify_email ?? ""}
+            />
+          </Field>
+        </div>
+      </div>
+
+      <ActionMessage state={state} successText="¡Ajustes y personalización guardados con éxito!" />
+      <SubmitButton>Guardar todos los ajustes de la web</SubmitButton>
     </form>
   );
 }
 
+/* ------------------------------------------------------------------ */
+/* Perfil docente                                                     */
+/* ------------------------------------------------------------------ */
+
 export function ProfessorProfileForm({
   profile,
+  user,
 }: {
   profile: ProfessorProfile | null;
+  user?: User | null;
 }) {
   const [state, formAction] = useActionState(
     updateProfessorProfileAction,
@@ -1048,27 +1294,39 @@ export function ProfessorProfileForm({
 
   return (
     <form action={formAction} className="space-y-4">
-      <Field
-        label="Encabezado profesional"
-        hint="Grado y especialidad, p. ej. «Químico, Ph.D. en Química Orgánica»."
-      >
-        <TextInput
-          name="headline"
-          required
-          defaultValue={profile?.headline ?? ""}
-        />
-      </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label="Nombre completo del profesor"
+          hint="Se actualiza en la portada, pie de página y cuenta administradora."
+        >
+          <TextInput
+            name="fullName"
+            required
+            defaultValue={user?.fullName ?? "Wilmer Molina Torres"}
+          />
+        </Field>
+        <Field
+          label="Encabezado profesional"
+          hint="Ej. «Químico, Ph.D. en Química Orgánica»."
+        >
+          <TextInput
+            name="headline"
+            required
+            defaultValue={profile?.headline ?? "Químico · Ph.D. en Química Orgánica"}
+          />
+        </Field>
+      </div>
       <Field label="Departamento / unidad académica">
         <TextInput
           name="department"
-          defaultValue={profile?.department ?? ""}
+          defaultValue={profile?.department ?? "Departamento de Química · Facultad de Ciencias"}
           placeholder="Departamento de Química · Facultad de Ciencias"
         />
       </Field>
-      <Field label="Biografía breve">
+      <Field label="Biografía breve del docente">
         <TextArea name="bio" defaultValue={profile?.bio ?? ""} />
       </Field>
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Field label="Horario de atención">
           <TextInput
             name="officeHours"
@@ -1076,11 +1334,11 @@ export function ProfessorProfileForm({
             placeholder="Lun y mié · 10:00–12:00"
           />
         </Field>
-        <Field label="Despacho">
+        <Field label="Despacho / Oficina">
           <TextInput
             name="office"
             defaultValue={profile?.office ?? ""}
-            placeholder="Pabellón B · 204"
+            placeholder="Pabellón B · Despacho Q-204"
           />
         </Field>
         <Field label="Correo institucional público">
@@ -1092,11 +1350,15 @@ export function ProfessorProfileForm({
           />
         </Field>
       </div>
-      <ActionMessage state={state} />
-      <SubmitButton>Guardar perfil</SubmitButton>
+      <ActionMessage state={state} successText="Perfil docente actualizado con éxito." />
+      <SubmitButton>Guardar perfil del profesor</SubmitButton>
     </form>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/* Botón «Enviar correo de prueba»                                   */
+/* ------------------------------------------------------------------ */
 
 function TestSubmitButton() {
   const { pending } = useFormStatus();
@@ -1111,20 +1373,22 @@ function TestSubmitButton() {
       ) : (
         <Send className="h-4 w-4" />
       )}
-      {pending ? "Enviando…" : "Enviar correo de prueba"}
+      {pending ? "Enviando prueba…" : "Enviar correo de prueba ahora"}
     </button>
   );
 }
 
-/** Botón «Enviar correo de prueba» (notificaciones Resend). */
 export function TestEmailButton() {
-  const [state, formAction] = useActionState(sendTestEmailAction, idleActionState);
+  const [state, formAction] = useActionState(
+    sendTestEmailAction,
+    idleActionState,
+  );
   return (
     <form action={formAction} className="space-y-3">
       <TestSubmitButton />
       <ActionMessage
         state={state}
-        successText="Correo de prueba enviado (revisa el buzón o la consola si está en modo simulado)."
+        successText="Correo de prueba enviado. Revisa tu buzón o la consola de logs."
       />
     </form>
   );

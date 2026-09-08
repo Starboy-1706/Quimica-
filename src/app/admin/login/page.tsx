@@ -4,8 +4,9 @@ import {
   ArrowLeft,
   GraduationCap,
   History,
+  KeyRound,
   ShieldCheck,
-  Users,
+  Sparkles,
 } from "lucide-react";
 import { LoginForm } from "@/components/admin/forms";
 
@@ -37,25 +38,25 @@ export default async function AdminLoginPage({
             <GraduationCap className="h-6 w-6" strokeWidth={1.75} />
           </span>
           <h1 className="mt-8 max-w-md font-display text-4xl font-semibold leading-tight">
-            La gestión docente,{" "}
-            <span className="italic text-brass">con trazabilidad total</span>.
+            Panel de administración{" "}
+            <span className="italic text-brass">del docente</span>.
           </h1>
           <ul className="mt-10 space-y-5 text-sm text-sand">
             {[
               {
-                icon: Users,
-                title: "Cuentas individuales",
-                body: "Nada de contraseñas compartidas: cada persona entra con su propia credencial.",
+                icon: KeyRound,
+                title: "Acceso directo por contraseña",
+                body: "Ingresa con tu clave maestra de forma rápida sin requerir correo.",
+              },
+              {
+                icon: Sparkles,
+                title: "Personalización completa",
+                body: "Edita textos, imágenes, títulos, horarios y colores institucionales.",
               },
               {
                 icon: ShieldCheck,
-                title: "Roles académicos",
-                body: "Administrador y Editor/Ayudante, verificados siempre en el servidor.",
-              },
-              {
-                icon: History,
-                title: "Auditoría completa",
-                body: "Quién subió qué, cuándo y desde dónde. Todo queda en la bitácora.",
+                title: "Gestión de correo y avisos",
+                body: "Configura Resend, alertas estudiantiles y publicaciones al instante.",
               },
             ].map(({ icon: Icon, title, body }) => (
               <li key={title} className="flex gap-4">
@@ -70,11 +71,11 @@ export default async function AdminLoginPage({
         </div>
 
         <p className="relative font-mono text-[10px] uppercase tracking-[0.3em] of text-muted">
-          Panel docente · Prof. Wilmer
+          Consola Docente · Control Total
         </p>
       </section>
 
-      {/* Formulario */}
+      {/* Formulario de contraseña */}
       <section className="flex items-center justify-center px-5 py-16">
         <div className="w-full max-w-sm">
           <Link
@@ -87,23 +88,24 @@ export default async function AdminLoginPage({
             Acceso interno
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold">
-            Inicia sesión
+            Entrar al panel
           </h2>
           <p className="mt-2 text-sm text-muted">
-            Usa tu cuenta individual del aula docente.
+            Introduce la contraseña de acceso.
           </p>
 
           <LoginForm next={typeof next === "string" ? next : ""} />
 
           <div className="mt-8 rounded-xl border border-line bg-panel p-4 text-xs leading-relaxed text-muted">
-            <p className="font-medium text-sand">Entorno de demostración</p>
+            <p className="font-medium text-sand">Contraseña inicial</p>
             <p className="mt-1">
-              Cuentas creadas por el script de semilla:
+              Clave de acceso por defecto:
             </p>
-            <p className="mt-2 font-mono text-[11px] text-sand">
-              wilmer@aula.edu · Aula#2026
-              <br />
-              ayudante@aula.edu · Ayudante#2026
+            <p className="mt-2 font-mono text-[12px] text-brass font-bold">
+              Aula#2026
+            </p>
+            <p className="mt-1.5 text-[11px] text-muted">
+              Puedes cambiar esta contraseña en cualquier momento desde el menú <strong>Ajustes</strong> del panel.
             </p>
           </div>
         </div>

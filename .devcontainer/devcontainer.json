@@ -1,25 +1,20 @@
 {
-  "name": "Aula Docente — Node 20",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-20-bookworm",
+  "name": "Aula Docente",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
   "forwardPorts": [3000],
   "portsAttributes": {
     "3000": {
-      "label": "Aula Docente (preview local)",
+      "label": "Aula Docente (preview)",
       "onAutoForward": "notify"
     }
   },
-  "postCreateCommand": "npm ci",
   "customizations": {
     "vscode": {
       "extensions": [
         "dbaeumer.vscode-eslint",
         "bradlc.vscode-tailwindcss",
         "esbenp.prettier-vscode"
-      ],
-      "settings": {
-        "editor.formatOnSave": true
-      }
+      ]
     }
-  },
-  "remoteUser": "node"
+  }
 }

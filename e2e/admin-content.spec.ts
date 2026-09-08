@@ -26,9 +26,6 @@ test("login → crear curso → subir PDF → publicar → visible y descargable
   /* ── 1. Login del profesor por la UI real ─────────────────────── */
   await page.goto("/admin/login");
   await expect(page).toHaveTitle(/Acceso al panel docente/);
-  await page.getByLabel(/correo institucional/i).fill(
-    process.env.E2E_ADMIN_EMAIL ?? "wilmer@aula.edu",
-  );
   await page
     .getByLabel(/contraseña/i)
     .fill(process.env.E2E_ADMIN_PASSWORD ?? "Aula#2026");

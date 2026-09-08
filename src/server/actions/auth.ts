@@ -24,59 +24,83 @@ export async function loginAction(
   _prev: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const email = String(formData.get("email") ?? "")
+  const password = String(formData.get("password") ?? "").trim();
+  const emailInput = String(formData.get("email") ?? "")
     .trim()
     .toLowerCase();
-  const password = String(formData.get("password") ?? "");
   const next = String(formData.get("next") ?? "");
 
-  if (!email || !password) {
-    return actionError("Ingresa tu correo institucional y tu contraseña.");
+  if (!password) {
+    return actionError("Por favor, ingresa la contraseña de acceso.");
   }
 
-  const [user] = await db
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+  // Si se envió un correo específico, buscamos ese usuario.
+  // Si no (modo contraseña única), buscamos entre los administradores y usuarios activos.
+  let matchedUser = null;
 
-  const valid = user ? await verifyPassword(password, user.passwordHash) : false;
+  if (emailInput) {
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, emailInput))
+      .limit(1);
 
-  if (!user || !valid) {
+    if (user && (await verifyPassword(password, user.passwordHash))) {
+      matchedUser = user;
+    }
+  } else {
+    // Buscar en todas las cuentas activas (priorizando administradores)
+    const activeUsers = await db
+      .select()
+      .from(users)
+      .where(eq(users.status, "activo"));
+
+    activeUsers.sort((a, b) => (a.role === "administrador" ? -1 : 1));
+
+    for (const candidate of activeUsers) {
+      if (await verifyPassword(password, candidate.passwordHash)) {
+        matchedUser = candidate;
+        break;
+      }
+    }
+  }
+
+  if (!matchedUser) {
     await recordAuditLog({
       actor: null,
       action: AUDIT_ACTIONS.LOGIN_FAILED,
       entity: "session",
-      summary: `Intento de acceso fallido para ${email}`,
-      metadata: { email },
+      summary: "Intento de acceso fallido (contraseña incorrecta)",
+      metadata: { metodo: emailInput ? "correo_y_clave" : "clave_directa" },
     });
-    return actionError("Credenciales inválidas. Verifica tus datos.");
+    return actionError("Contraseña incorrecta. Verifica e inténtalo de nuevo.");
   }
 
-  if (user.status !== "activo") {
+  if (matchedUser.status !== "activo") {
     await recordAuditLog({
-      actor: user,
+      actor: matchedUser,
       action: AUDIT_ACTIONS.LOGIN_BLOCKED,
       entity: "session",
-      entityId: user.id,
-      summary: `Acceso bloqueado: cuenta suspendida (${email})`,
+      entityId: matchedUser.id,
+      summary: `Acceso bloqueado: cuenta suspendida (${matchedUser.email})`,
     });
-    return actionError("Tu cuenta está suspendida. Contacta al administrador.");
+    return actionError("La cuenta asociada está suspendida. Contacta al soporte.");
   }
 
   const meta = await getRequestMeta();
-  await createSession(user.id, meta);
+  await createSession(matchedUser.id, meta);
   await db
     .update(users)
     .set({ lastLoginAt: new Date(), updatedAt: new Date() })
-    .where(eq(users.id, user.id));
+    .where(eq(users.id, matchedUser.id));
 
   await recordAuditLog({
-    actor: user,
+    actor: matchedUser,
     action: AUDIT_ACTIONS.LOGIN,
     entity: "session",
-    entityId: user.id,
-    summary: `${user.fullName} inició sesión`,
+    entityId: matchedUser.id,
+    summary: `${matchedUser.fullName} inició sesión`,
+    metadata: { metodo: "clave_directa" },
   });
 
   redirect(next.startsWith("/admin") ? next : "/admin");

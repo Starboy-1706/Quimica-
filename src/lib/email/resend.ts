@@ -5,18 +5,15 @@ import { eq } from "drizzle-orm";
 /**
  * Sistema de notificaciones por correo — Resend operado desde el servidor.
  * ------------------------------------------------------------------
- * - La clave vive SOLO en el servidor: `RESEND_API_KEY` (nunca en DB).
- * - Remitente: `RESEND_FROM` (o el valor por defecto de abajo).
+ * - La API Key y el remitente se pueden configurar directamente desde el
+ *   panel de administración (en `site_settings`) o mediante variables de
+ *   entorno (`RESEND_API_KEY`, `RESEND_FROM`).
  * - Destinatario de alertas: clave editable `notify_email` en
  *   site_settings (respaldo: correo institucional del perfil).
  * - Si NO hay clave configurada, el modo **simulado** registra el
  *   envío por consola y devuelve éxito: la funcionalidad queda
- *   probada sin credenciales y la integración se activa con una
- *   sola variable de entorno.
+ *   probada sin credenciales.
  */
-const RESEND_API_KEY = process.env.RESEND_API_KEY;
-const RESEND_FROM =
-  process.env.RESEND_FROM ?? "Aula Docente <notificaciones@aula-docente.dev>";
 
 export type SendResult =
   | { ok: true; simulated: boolean; id?: string }
@@ -28,12 +25,51 @@ export type NotificationStatus =
   | "fallida"
   | "sin-destinatario";
 
-export function resendConfigured(): boolean {
-  return Boolean(RESEND_API_KEY);
+export async function getResendApiKey(): Promise<string | null> {
+  try {
+    const [row] = await db
+      .select()
+      .from(siteSettings)
+      .where(eq(siteSettings.key, "resend_api_key"))
+      .limit(1);
+
+    let value: unknown = row?.value;
+    if (typeof value !== "string") value = JSON.stringify(value);
+    const candidate = String(value ?? "").trim().replace(/^"|"$/g, "");
+    if (candidate) return candidate;
+  } catch {
+    /* fallback a env */
+  }
+  return process.env.RESEND_API_KEY || null;
 }
 
-export function resendSenderLabel(): string {
-  return RESEND_FROM;
+export async function getResendFrom(): Promise<string> {
+  try {
+    const [row] = await db
+      .select()
+      .from(siteSettings)
+      .where(eq(siteSettings.key, "resend_from"))
+      .limit(1);
+
+    let value: unknown = row?.value;
+    if (typeof value !== "string") value = JSON.stringify(value);
+    const candidate = String(value ?? "").trim().replace(/^"|"$/g, "");
+    if (candidate) return candidate;
+  } catch {
+    /* fallback a env */
+  }
+  return (
+    process.env.RESEND_FROM ?? "Aula Docente <onboarding@resend.dev>"
+  );
+}
+
+export async function resendConfigured(): Promise<boolean> {
+  const key = await getResendApiKey();
+  return Boolean(key);
+}
+
+export async function resendSenderLabel(): Promise<string> {
+  return getResendFrom();
 }
 
 export async function sendEmail(options: {
@@ -42,7 +78,10 @@ export async function sendEmail(options: {
   html: string;
   text: string;
 }): Promise<SendResult> {
-  if (!RESEND_API_KEY) {
+  const apiKey = await getResendApiKey();
+  const from = await getResendFrom();
+
+  if (!apiKey) {
     console.info(
       `[email:simulado] Para: ${options.to} · Asunto: ${options.subject}`,
     );
@@ -53,11 +92,11 @@ export async function sendEmail(options: {
     const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${RESEND_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: RESEND_FROM,
+        from,
         to: [options.to],
         subject: options.subject,
         html: options.html,
@@ -90,16 +129,20 @@ export async function sendEmail(options: {
 /* ------------------------------------------------------------------ */
 
 export async function getNotifyEmail(): Promise<string | null> {
-  const [row] = await db
-    .select()
-    .from(siteSettings)
-    .where(eq(siteSettings.key, "notify_email"))
-    .limit(1);
+  try {
+    const [row] = await db
+      .select()
+      .from(siteSettings)
+      .where(eq(siteSettings.key, "notify_email"))
+      .limit(1);
 
-  let value: unknown = row?.value;
-  if (typeof value !== "string") value = JSON.stringify(value);
-  const candidate = String(value ?? "").trim();
-  return candidate && candidate !== '""' ? candidate.replace(/^"|"$/g, "") : null;
+    let value: unknown = row?.value;
+    if (typeof value !== "string") value = JSON.stringify(value);
+    const candidate = String(value ?? "").trim();
+    return candidate && candidate !== '""' ? candidate.replace(/^"|"$/g, "") : null;
+  } catch {
+    return null;
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -188,7 +231,7 @@ export function buildTestEmail(input: {
   const html = emailShell(
     "Correo de prueba",
     `<p style="margin:0;font-size:14px;line-height:1.7;color:#1b1710;">
-      Las notificaciones del aula docente están funcionando. Recibirás en este
+      Las notificaciones del aula docente están funcionando correctamente. Recibirás en este
       buzón una alerta cada vez que un estudiante envíe una consulta desde la web.
     </p>
     ${actionButton(input.panelUrl, "Ir al panel docente")}`,

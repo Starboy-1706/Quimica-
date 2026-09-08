@@ -9,12 +9,14 @@ import * as schema from "./schema";
  * al connection pooler del proyecto (puerto 6543) o a la conexión
  * directa (puerto 5432). Se habilita TLS automáticamente cuando la URL
  * corresponde a Supabase o declara `sslmode=require`.
+ *
+ * Fallback a URL local inocua para que `npm run build` o la CI puedan
+ * compilar sin que el módulo falle por ausencia de variable en tiempo
+ * de importación.
  */
-const databaseUrl = process.env.DATABASE_URL;
-
-if (!databaseUrl) {
-  throw new Error("DATABASE_URL is required");
-}
+const databaseUrl =
+  process.env.DATABASE_URL ??
+  "postgresql://postgres:postgres@127.0.0.1:5432/app_db";
 
 const requiresSsl =
   databaseUrl.includes("supabase") || databaseUrl.includes("sslmode=require");

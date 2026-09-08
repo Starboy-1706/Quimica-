@@ -6,9 +6,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   CalendarClock,
-  ChevronRight,
   Clock,
-  FlaskConical,
   Lock,
   Mail,
   MapPin,
@@ -38,19 +36,19 @@ import { ContactForm } from "@/components/admin/forms";
 
 export const dynamic = "force-dynamic";
 
-const LAB_HERO_URL =
+const DEFAULT_LAB_HERO_URL =
   "https://images.pexels.com/photos/5427673/pexels-photo-5427673.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200";
-const LAB_GLASSWARE_URL =
+const DEFAULT_LAB_GLASSWARE_URL =
   "https://images.pexels.com/photos/8927674/pexels-photo-8927674.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=627&w=1200";
 
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettingsMap();
   const title = settings.site_title ?? "Aula Docente";
   return {
-    title: { absolute: `${title} — Prof. Wilmer Molina · Química` },
+    title: { absolute: `${title} — Prof. Wilmer Molina` },
     description:
       settings.site_tagline ??
-      "Asignaturas de química, avisos, agenda de evaluaciones y repositorio de materiales.",
+      "Asignaturas, avisos, agenda de evaluaciones y repositorio de materiales.",
   };
 }
 
@@ -100,18 +98,54 @@ export default async function PublicHomePage() {
       }),
     ]);
 
-  const siteTitle = settings.site_title ?? "La química, explicada con rigor";
-  const siteTagline = settings.site_tagline ?? "";
-  const academicTerm = settings.academic_term ?? "";
+  const teacherName = profile?.user.fullName ?? "Prof. Wilmer Molina";
+  const departmentName =
+    profile?.department ?? settings.institution_name ?? "Departamento de Química";
+  const siteTitle = settings.site_title || "La química, explicada con rigor";
+  const siteTagline =
+    settings.site_tagline ||
+    "Asignaturas, prácticas de laboratorio y material de estudio del Prof. Wilmer Molina.";
+  const academicTerm = settings.academic_term ?? "2026-I";
+
+  const heroBgWord = settings.hero_bg_word || "Química";
+  const heroBadge =
+    settings.hero_badge ||
+    (academicTerm
+      ? `${departmentName} · Período ${academicTerm}`
+      : departmentName);
+  const heroImageUrl = settings.hero_image_url || DEFAULT_LAB_HERO_URL;
+  const aboutImageUrl =
+    settings.about_image_url || DEFAULT_LAB_GLASSWARE_URL;
+
+  const sectionCoursesTitle =
+    settings.section_courses_title || "Asignaturas activas";
+  const sectionCoursesSubtitle =
+    settings.section_courses_subtitle ||
+    "Guías de prácticas, ejercicios resueltos, presentaciones y programas, organizados por curso y descarga segura.";
+
+  const sectionAgendaTitle =
+    settings.section_agenda_title || "Próximas evaluaciones";
+  const sectionAgendaSubtitle =
+    settings.section_agenda_subtitle ||
+    "Exámenes, entregas y sesiones reprogramadas con fecha confirmada. Consulta la agenda completa para todo el período.";
+
+  const sectionAnnouncementsTitle =
+    settings.section_announcements_title || "Tablón de avisos";
+  const sectionAboutTitle = settings.section_about_title || "El docente";
+  const sectionContactTitle =
+    settings.section_contact_title || "Consulta directa";
+  const sectionContactSubtitle =
+    settings.section_contact_subtitle ||
+    "¿Dudas con un ejercicio, una práctica de laboratorio o el programa? Escríbeme desde aquí: tu mensaje llega a la bandeja interna del aula y te respondo a tu correo institucional.";
 
   const personJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: profile?.user.fullName ?? "Wilmer Molina",
+    name: teacherName,
     jobTitle: profile?.headline ?? "Docente universitario",
     affiliation: {
       "@type": "CollegeOrUniversity",
-      name: profile?.department ?? "Departamento de Química",
+      name: departmentName,
     },
     email: profile?.contactEmail ?? undefined,
     url: "/",
@@ -129,7 +163,7 @@ export default async function PublicHomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
-      <PublicNav active="inicio" profile={profile} />
+      <PublicNav active="inicio" profile={profile} settings={settings} />
 
       <main id="contenido">
         {/* ── Portada / Presentación ─────────────────────────────── */}
@@ -139,14 +173,14 @@ export default async function PublicHomePage() {
             aria-hidden="true"
           >
             <p className="text-center font-display text-[22vw] font-black italic leading-none text-(--brand)/[0.05]">
-              Química
+              {heroBgWord}
             </p>
           </div>
           <div className="relative mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.15fr_1fr] lg:items-center lg:pt-24">
             <div>
-              {academicTerm ? (
+              {heroBadge ? (
                 <p className="animate-rise font-mono text-[11px] uppercase tracking-[0.3em] text-(--brand)">
-                  Departamento de Química · Período {academicTerm}
+                  {heroBadge}
                 </p>
               ) : null}
               <h1
@@ -207,8 +241,8 @@ export default async function PublicHomePage() {
             <div className="relative">
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-ink/10">
                 <Image
-                  src={LAB_HERO_URL}
-                  alt="El profesor vertiendo una disolución en un matraz durante una clase práctica de química"
+                  src={heroImageUrl}
+                  alt="Fotografía principal del aula"
                   fill
                   priority
                   sizes="(min-width: 1024px) 42vw, 100vw"
@@ -218,10 +252,10 @@ export default async function PublicHomePage() {
               </div>
               <div className="relative z-10 mx-4 -mt-14 rounded-2xl border border-ink/10 bg-paper p-5 shadow-[0_18px_50px_-20px_rgba(27,23,16,0.45)] sm:mx-6">
                 <p className="font-display text-lg font-semibold">
-                  {profile?.user.fullName ?? "Prof. Wilmer Molina"}
+                  {teacherName}
                 </p>
                 <p className="mt-0.5 text-xs italic text-ink-soft">
-                  {profile?.headline ?? "Departamento de Química"}
+                  {profile?.headline ?? departmentName}
                 </p>
                 <ul className="mt-4 space-y-2.5 text-sm text-ink-soft">
                   {profile?.office ? (
@@ -270,7 +304,7 @@ export default async function PublicHomePage() {
                 01
               </p>
               <h2 id="activas" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                Asignaturas activas
+                {sectionCoursesTitle}
               </h2>
             </div>
             <Link
@@ -280,6 +314,9 @@ export default async function PublicHomePage() {
               Listado completo <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </div>
+          {sectionCoursesSubtitle ? (
+            <p className="mt-2 text-sm text-ink-soft">{sectionCoursesSubtitle}</p>
+          ) : null}
 
           {activeCourses.length === 0 ? (
             <p className="border-b border-ink/15 py-14 text-center font-display text-2xl italic text-ink-soft">
@@ -352,11 +389,10 @@ export default async function PublicHomePage() {
                   02
                 </p>
                 <h2 id="proximas" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                  Próximas evaluaciones
+                  {sectionAgendaTitle}
                 </h2>
                 <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-soft">
-                  Exámenes, entregas y sesiones reprogramadas con fecha
-                  confirmada. Consulta la agenda completa para todo el período.
+                  {sectionAgendaSubtitle}
                 </p>
                 <Link
                   href="/agenda"
@@ -413,7 +449,7 @@ export default async function PublicHomePage() {
                   03
                 </p>
                 <h2 id="avisos-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                  Tablón de avisos
+                  {sectionAnnouncementsTitle}
                 </h2>
               </div>
               <Megaphone className="hidden h-6 w-6 text-paper/40 sm:block" aria-hidden="true" />
@@ -484,12 +520,12 @@ export default async function PublicHomePage() {
                   04
                 </p>
                 <h2 id="docente-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                  El docente
+                  {sectionAboutTitle}
                 </h2>
                 <div className="relative mt-6 hidden aspect-[4/3] overflow-hidden rounded-2xl border border-ink/10 md:block">
                   <Image
-                    src={LAB_GLASSWARE_URL}
-                    alt="Matraces de laboratorio con disoluciones azules sobre la mesa de trabajo"
+                    src={aboutImageUrl}
+                    alt="Fotografía de la sección docente"
                     fill
                     sizes="(min-width: 768px) 30vw, 100vw"
                     className="object-cover"
@@ -500,9 +536,9 @@ export default async function PublicHomePage() {
                 <p className="font-display text-2xl font-medium italic">
                   {profile.headline}
                 </p>
-                {profile.department ? (
+                {departmentName ? (
                   <p className="mt-2 font-mono text-[11px] uppercase tracking-[0.22em] text-(--brand)">
-                    {profile.department}
+                    {departmentName}
                   </p>
                 ) : null}
                 {profile.bio ? (
@@ -552,12 +588,10 @@ export default async function PublicHomePage() {
                 05
               </p>
               <h2 id="consultas-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
-                Consulta directa
+                {sectionContactTitle}
               </h2>
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-soft">
-                ¿Dudas con un ejercicio, una práctica de laboratorio o el
-                programa? Escríbeme desde aquí: tu mensaje llega a la bandeja
-                interna del aula y te respondo a tu correo institucional.
+                {sectionContactSubtitle}
               </p>
               <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-ink/15 px-3.5 py-1.5 text-[11px] text-ink-soft">
                 <Lock className="h-3 w-3 text-(--brand)" aria-hidden="true" />
@@ -574,7 +608,7 @@ export default async function PublicHomePage() {
         </section>
       </main>
 
-      <PublicFooter profile={profile} />
+      <PublicFooter profile={profile} settings={settings} />
     </div>
   );
 }
