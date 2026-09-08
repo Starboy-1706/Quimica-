@@ -30,9 +30,9 @@ Basta apuntar `DATABASE_URL` al *Connection Pooler* del proyecto
 (`Project Settings → Database → Connection String`). Drizzle gestiona el
 esquema (`auth.users` de Supabase **no** se toca: las cuentas del aula
 viven en la tabla propia `users`, con credenciales individuales scrypt).
-En la siguiente fase, `NEXT_PUBLIC_SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`
-(ya previstas en `.env.example`) activarán Auth administrado y Storage
-para los archivos de materiales.
+En la siguiente fase, `SUPABASE_URL` / `SUPABASE_SERVICE_ROLE_KEY`
+(ya previstas en `.env.example`, siempre solo de servidor) activarán Auth
+administrado y Storage para los archivos de materiales.
 
 ### CI — GitHub Actions
 
@@ -323,13 +323,13 @@ build en cada push.
 | Variable | Valor |
 | --- | --- |
 | `DATABASE_URL` | URI del pooler de Supabase (`?pgbouncer=true` opcional) |
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://<ref>.supabase.co` |
+| `SUPABASE_URL` | `https://<ref>.supabase.co` (solo servidor, sin prefijo público) |
 | `SUPABASE_SERVICE_ROLE_KEY` | service-role (secreta, solo servidor) |
 | `SUPABASE_STORAGE_BUCKET` | `materiales` |
 | `RESEND_API_KEY` | `re_…` |
 | `RESEND_FROM` | remitente verificado |
-| `NEXT_PUBLIC_SITE_URL` | URL pública final (SEO + enlaces en correos) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon key (reservada para futuras fases) |
+| `NEXT_PUBLIC_SITE_URL` | URL pública final (SEO + enlaces; es pública por diseño) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | opcional, solo si se usa Supabase Auth en cliente |
 
 3. Deploy → verifica `/api/health` y ejecuta la suite:
    `PLAYWRIGHT_BASE_URL=<url> npx playwright test`.

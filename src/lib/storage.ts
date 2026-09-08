@@ -11,19 +11,53 @@ import {
  * Capa de almacenamiento de archivos académicos.
  * ------------------------------------------------------------------
  * Driver activo:
- *  - **Supabase Storage** si existen `NEXT_PUBLIC_SUPABASE_URL` y
- *    `SUPABASE_SERVICE_ROLE_KEY` (bucket privado, entrega con URLs
- *    firmadas de 5 minutos → nada de enlaces directos permanentes).
- *  - **Local** (`.storage/`) como reserva para desarrollo/preview.
+ *  - **Supabase Storage** si existen `SUPABASE_URL` y
+ *    `SUPABASE_SERVICE_ROLE_KEY`, ambas SOLO de servidor (sin prefijo
+ *    NEXT_PUBLIC_: su valor nunca se expone al navegador). Bucket privado
+ *    y entrega con URLs firmadas de 5 minutos.
+ *  - **Temporal** (/tmp) como reserva para desarrollo/preview.
  *
  * En AMBOS casos los archivos se sirven únicamente a través de la ruta
- * protegida `/archivos/[...key]`, que aplica el control de acceso:
- * contenido publicado = público; borrador/archivado = solo personal
- * del aula autenticado.
+ * protegida (/archivos/[key]·/imagenes/[key]) con control de acceso.
+ * Se acepta `NEXT_PUBLIC_SUPABASE_URL` como respaldo heredado para no
+ * romper despliegues durante la migración de nombre.
  */
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const STORAGE_BUCKET = process.env.SUPABASE_STORAGE_BUCKET ?? "materiales";
+
+/** Limpia espacios y comillas accidentales al pegar valores en el panel. */
+function normalizeSecret(raw: string | undefined): string | null {
+  const value = (raw ?? "")
+    .trim()
+    .replace(/^["']+|["']+$/g, "")
+    .trim();
+  return value || null;
+}
+
+/**
+ * Normaliza la URL de Supabase: exige http(s) real en origen limpio.
+ * Si el formato es inválido, el driver pasa a modo temporal y lo avisa
+ * en logs en lugar de romper la app.
+ */
+function normalizeSupabaseUrl(raw: string | undefined): string | null {
+  const value = normalizeSecret(raw);
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    return url.origin;
+  } catch {
+    console.warn(
+      `[storage] SUPABASE_URL con formato inválido (debe empezar por https:// y no llevar comillas/espacios).`,
+    );
+    return null;
+  }
+}
+
+const SUPABASE_URL = normalizeSupabaseUrl(
+  process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL,
+);
+const SUPABASE_KEY = normalizeSecret(process.env.SUPABASE_SERVICE_ROLE_KEY);
+const STORAGE_BUCKET =
+  normalizeSecret(process.env.SUPABASE_STORAGE_BUCKET) ?? "materiales";
 /** Fallback acotado para desarrollo/preview; Vercel usa Supabase Storage. */
 const LOCAL_DIR = process.env.STORAGE_DIR ?? "/tmp/aula-docente-storage";
 
