@@ -16,8 +16,10 @@ import {
   recordAuditLog,
 } from "@/lib/audit";
 import { requireActionUser } from "@/lib/auth/session";
+import { getProfessorPublicProfile } from "@/server/queries";
 import {
   buildNewMessageEmail,
+  buildStudentConfirmationEmail,
   getNotifyEmail,
   sendEmail,
   type NotificationStatus,
@@ -126,12 +128,19 @@ export async function submitContactMessageAction(
     })
     .returning();
 
-  /* Alerta automática al profesor (Resend desde el servidor). */
+  /*
+   * Notificaciones automáticas (Resend desde el servidor):
+   *  1. Alerta al profesor con `reply_to` = correo del estudiante, para
+   *     contestar la duda con solo pulsar «Responder» en su buzón.
+   *  2. Confirmación automática al estudiante de que su mensaje llegó.
+   */
   let notificacion: NotificationStatus = "sin-destinatario";
+  let confirmacion: NotificationStatus = "sin-destinatario";
+  const siteUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   const notifyTo = await getNotifyEmail();
+
   if (notifyTo) {
-    const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     const template = buildNewMessageEmail({
       name,
       email,
@@ -145,6 +154,7 @@ export async function submitContactMessageAction(
       subject: template.subject,
       html: template.html,
       text: template.text,
+      replyTo: email,
     });
     notificacion = result.ok
       ? result.simulated
@@ -153,6 +163,39 @@ export async function submitContactMessageAction(
       : "fallida";
     if (!result.ok) {
       console.error("[email] No se pudo notificar la consulta:", result.error);
+    }
+
+    /* Confirmación al estudiante (mismo estado operativo del servicio). */
+    try {
+      const teacherName =
+        (await getProfessorPublicProfile())?.user.fullName ??
+        "El equipo docente";
+      const confirmation = buildStudentConfirmationEmail({
+        name,
+        courseLabel,
+        subject: subject || null,
+        siteUrl,
+        teacherName,
+      });
+      const confirmationResult = await sendEmail({
+        to: email,
+        subject: confirmation.subject,
+        html: confirmation.html,
+        text: confirmation.text,
+      });
+      confirmacion = confirmationResult.ok
+        ? confirmationResult.simulated
+          ? "simulada"
+          : "enviada"
+        : "fallida";
+      if (!confirmationResult.ok) {
+        console.error(
+          "[email] No se pudo confirmar al estudiante:",
+          confirmationResult.error,
+        );
+      }
+    } catch (error) {
+      console.error("[email] Error preparando la confirmación:", error);
     }
   }
 
@@ -167,6 +210,7 @@ export async function submitContactMessageAction(
       courseId,
       notificacion,
       notificadaA: notificacion !== "sin-destinatario" ? "profesor" : null,
+      confirmacion,
     },
   });
 

@@ -1222,7 +1222,7 @@ export function SiteSettingsForm({
         <div className="grid gap-4 sm:grid-cols-[1.6fr_1fr]">
           <Field
             label="URL de la página de Google Sites (opcional)"
-            hint="Pega el enlace público de tu página de Google Sites (debe empezar por https://). Si lo dejas vacío, solo se muestra el visor 3D nativo."
+            hint="Pega el enlace público (https://sites.google.com/view/…) o el código de inserción <iframe> completo: al salir del campo se extrae la URL automáticamente. Vacío = solo visor 3D nativo."
           >
             <TextInput
               name="sim_google_sites_url"
@@ -1230,6 +1230,13 @@ export function SiteSettingsForm({
               inputMode="url"
               placeholder="https://sites.google.com/view/tu-sitio"
               defaultValue={values.sim_google_sites_url ?? ""}
+              onBlur={(event) => {
+                const raw = event.target.value.trim();
+                const embedMatch = /src=["']([^"']+)["']/i.exec(raw);
+                if (embedMatch) {
+                  event.target.value = embedMatch[1];
+                }
+              }}
             />
           </Field>
           <Field label="Título del bloque embebido">
@@ -1242,8 +1249,11 @@ export function SiteSettingsForm({
         </div>
         <p className="rounded-xl border border-line bg-lift/50 px-3.5 py-2.5 text-[11px] leading-relaxed text-muted">
           <strong className="text-sand">Cómo publicar en Google Sites:</strong>{" "}
-          en tu sitio → <em>Compartir</em> → <em>Copiar enlace público</em>. La
-          página se mostrará embebida en la sección nº 03 con sandbox seguro;
+          en tu sitio → <em>Compartir</em> → <em>Copiar enlace público</em>, o{" "}
+          <em>Insertar</em> → copia el código <em>&lt;iframe&gt;</em> entero en
+          el campo (la URL se limpia sola). La simulación se muestra en la
+          sección nº 04 con sandbox seguro y <strong className="text-sand">carga
+          diferida</strong>: el estudiante decide cuándo conectar con Google;
           el visor 3D de moléculas (H₂O, CO₂, NH₃, CH₄, etanol, benceno)
           siempre funciona sin depender de Google.
         </p>
@@ -1283,7 +1293,7 @@ export function SiteSettingsForm({
         </p>
         <Field
           label="Resend API Key"
-          hint="Introduce aquí tu clave de Resend (re_...) para no depender de variables de entorno."
+          hint="Clave de Resend (empieza por «re_»). Se valida su formato al guardar y tiene prioridad sobre la variable de entorno."
         >
           <TextInput
             name="resend_api_key"
@@ -1306,7 +1316,7 @@ export function SiteSettingsForm({
           </Field>
           <Field
             label="Correo para alertas de consultas"
-            hint="Buzón donde recibirás los avisos de nuevas dudas enviadas por alumnos."
+            hint="Buzón donde recibirás las dudas. La alerta llega con «Responder a» el correo del estudiante, y este recibe una confirmación automática."
           >
             <TextInput
               name="notify_email"

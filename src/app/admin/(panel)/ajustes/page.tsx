@@ -15,8 +15,7 @@ import { formatDateTime } from "@/lib/format";
 import { storageDriverLabel } from "@/lib/storage";
 import {
   getNotifyEmail,
-  resendConfigured,
-  resendSenderLabel,
+  getResendStatus,
 } from "@/lib/email/resend";
 import {
   ALLOWED_UPLOAD_EXTENSIONS,
@@ -42,7 +41,7 @@ export const dynamic = "force-dynamic";
 export default async function AdminSettingsPage() {
   await requirePageUser(["administrador"]);
 
-  const [values, profile, lastTouched, notifyEmail, isResendReady, senderFrom] =
+  const [values, profile, lastTouched, notifyEmail, resendStatus] =
     await Promise.all([
       getSiteSettingsMap(),
       getProfessorPublicProfile(),
@@ -52,9 +51,11 @@ export default async function AdminSettingsPage() {
         .orderBy(desc(siteSettings.updatedAt))
         .limit(1),
       getNotifyEmail(),
-      resendConfigured(),
-      resendSenderLabel(),
+      getResendStatus(),
     ]);
+
+  const isResendReady = resendStatus.configured;
+  const senderFrom = resendStatus.from;
 
   return (
     <div className="space-y-8">
@@ -136,10 +137,34 @@ export default async function AdminSettingsPage() {
                 )}
               </dd>
             </div>
-            <div className="flex justify-between gap-4">
+            <div className="flex items-center justify-between gap-4">
+              <dt>Clave de API</dt>
+              <dd>
+                {resendStatus.configured ? (
+                  resendStatus.keyValid ? (
+                    <Badge tone="green">
+                      válida · desde{" "}
+                      {resendStatus.source === "panel"
+                        ? "ajustes del panel"
+                        : "variable de entorno"}
+                    </Badge>
+                  ) : (
+                    <Badge tone="red">formato sospechoso (debe ser «re_…»)</Badge>
+                  )
+                ) : (
+                  <Badge tone="slate">sin configurar</Badge>
+                )}
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
               <dt>Remitente activo</dt>
-              <dd className="text-right font-mono text-[10px] text-sand">
-                {senderFrom}
+              <dd className="flex items-center gap-2">
+                <span className="text-right font-mono text-[10px] text-sand">
+                  {senderFrom}
+                </span>
+                {!resendStatus.fromValid ? (
+                  <Badge tone="red">formato</Badge>
+                ) : null}
               </dd>
             </div>
             <div className="flex justify-between gap-4">
@@ -148,12 +173,31 @@ export default async function AdminSettingsPage() {
                 {notifyEmail ?? "sin configurar"}
               </dd>
             </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt>Respuesta cómoda</dt>
+              <dd>
+                <Badge tone="blue">Reply-To al estudiante</Badge>
+              </dd>
+            </div>
+            <div className="flex items-center justify-between gap-4">
+              <dt>Confirmación al estudiante</dt>
+              <dd>
+                {isResendReady && notifyEmail ? (
+                  <Badge tone="green">automática</Badge>
+                ) : (
+                  <Badge tone="slate">pendiente de configuración</Badge>
+                )}
+              </dd>
+            </div>
           </dl>
 
           <p className="mt-4 rounded-xl border border-line bg-lift/40 px-3.5 py-2.5 text-[11px] leading-relaxed text-muted">
             <Mail className="inline h-3 w-3 text-brass mr-1" />
             Puedes ingresar tu <strong className="text-cream">Resend API Key</strong>{" "}
-            directamente en el formulario de arriba (Grupo 5) sin tocar variables de entorno ni hacer redeploy.
+            directamente en el formulario de arriba (Grupo 6) sin tocar variables de
+            entorno ni hacer redeploy. Los envíos tienen <strong className="text-cream">reintento
+            automático</strong> ante fallos de red o saturación de la API (timeout 10 s +
+            una reintentiva).
           </p>
 
           <div className="mt-4 border-t border-line pt-4">

@@ -8,11 +8,13 @@ import {
   BookOpen,
   CalendarClock,
   FlaskConical,
+  GraduationCap,
   Home,
   LogIn,
   Megaphone,
   Menu,
   MessageSquare,
+  Table2,
   X,
 } from "lucide-react";
 
@@ -29,6 +31,18 @@ const MENU_LINKS = [
     label: "Agenda",
     desc: "Exámenes y fechas clave",
     icon: CalendarClock,
+  },
+  {
+    href: "/estudio",
+    label: "Centro de estudio",
+    desc: "Calculadora, quiz y constantes",
+    icon: GraduationCap,
+  },
+  {
+    href: "/estudio/tabla-periodica",
+    label: "Tabla periódica",
+    desc: "Los 118 elementos interactivos",
+    icon: Table2,
   },
   {
     href: "/#simulaciones",

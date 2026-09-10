@@ -76,14 +76,62 @@ export async function updateSiteSettingsAction(
       }
     }
 
-    // El enlace embebido de Google Sites debe ser https:// (contenido externo).
+    /*
+     * Enlace embebido de Google Sites: se acepta la URL pública o el código
+     * de inserción completo (<iframe src="…">: se extrae la URL). Debe ser
+     * https y del dominio oficial sites.google.com.
+     */
+    if (changed.sim_google_sites_url) {
+      let cleaned = changed.sim_google_sites_url.trim();
+      const embedMatch = /src=["']([^"']+)["']/i.exec(cleaned);
+      if (embedMatch) cleaned = embedMatch[1];
+
+      let parsed: URL | null = null;
+      try {
+        parsed = new URL(cleaned);
+      } catch {
+        parsed = null;
+      }
+      if (
+        !parsed ||
+        parsed.protocol !== "https:" ||
+        !(
+          parsed.hostname === "sites.google.com" ||
+          parsed.hostname.endsWith(".sites.google.com")
+        )
+      ) {
+        return actionError(
+          "El enlace debe ser una URL pública de Google Sites: https://sites.google.com/view/tu-sitio (también vale pegar el código de inserción <iframe> completo).",
+        );
+      }
+      changed.sim_google_sites_url = cleaned;
+    }
+
+    // La clave de Resend tiene formato fijo («re_…»); el remitente debe ser
+    // «Nombre <correo@dominio>» o un correo simple.
     if (
-      changed.sim_google_sites_url &&
-      !changed.sim_google_sites_url.startsWith("https://")
+      changed.resend_api_key &&
+      !/^re_[A-Za-z0-9_-]{8,}$/.test(changed.resend_api_key.trim())
     ) {
       return actionError(
-        "La URL de Google Sites debe empezar por https:// (usa el enlace público del sitio).",
+        "La clave de Resend debe empezar por «re_» y contener solo letras, dígitos, «-» o «_». Cópiala íntegra desde resend.com → API Keys.",
       );
+    }
+    if (changed.resend_api_key) {
+      changed.resend_api_key = changed.resend_api_key.trim();
+    }
+    if (
+      changed.resend_from &&
+      !/^([^<>{}"']+\s+)?<?[^\s@<>{}]+@[^\s@<>{}]+\.[^\s@<>{}]+>?$/.test(
+        changed.resend_from.trim(),
+      )
+    ) {
+      return actionError(
+        "El remitente debe tener formato «Aula Docente <correo@tudominio.edu>» o un correo simple verificado en Resend.",
+      );
+    }
+    if (changed.resend_from) {
+      changed.resend_from = changed.resend_from.trim();
     }
 
     for (const key of SITE_SETTING_KEYS) {

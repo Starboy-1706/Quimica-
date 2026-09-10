@@ -7,14 +7,17 @@ import {
   ArrowUpRight,
   Atom,
   Beaker,
+  Calculator,
   CalendarClock,
   Clock,
   FlaskConical,
+  GraduationCap,
   Lock,
   Mail,
   MapPin,
   Megaphone,
   Pin,
+  Table2,
 } from "lucide-react";
 import { db } from "@/db";
 import { courseAnnouncements, courses } from "@/db/schema";
@@ -544,6 +547,89 @@ export default async function PublicHomePage() {
           </section>
         ) : null}
 
+        {/* ── Centro de estudio (herramientas interactivas) ──────────── */}
+        <section aria-labelledby="estudio-h">
+          <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
+            <div className="flex items-end justify-between border-b-2 border-ink pb-4">
+              <div>
+                <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
+                  03
+                </p>
+                <h2 id="estudio-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
+                  Centro de estudio
+                </h2>
+              </div>
+              <GraduationCap className="hidden h-6 w-6 text-ink/30 sm:block" aria-hidden="true" />
+            </div>
+            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-ink-soft">
+              Herramientas interactivas de química, abiertas a cualquier
+              estudiante y sin registro: explora la tabla periódica, resuelve
+              masas molares al instante y entrena antes del examen.
+            </p>
+            <div className="mt-10 grid gap-5 md:grid-cols-3">
+              <Link
+                href="/estudio/tabla-periodica"
+                className="group flex flex-col rounded-2xl border border-ink/10 bg-white/50 p-6 transition hover:-translate-y-1 hover:border-(--brand) hover:shadow-[0_22px_45px_-28px_rgba(27,23,16,0.55)]"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-(--brand) text-paper transition group-hover:scale-105">
+                  <Table2 className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <h3 className="mt-4 font-display text-xl font-semibold">
+                  Tabla periódica interactiva
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">
+                  Los 118 elementos con masa atómica, configuración
+                  electrónica y electronegatividad. Busca, filtra por familia
+                  y descubre datos curiosos.
+                </p>
+                <span className="mt-5 inline-flex items-center gap-1.5 border-t border-ink/10 pt-4 text-sm font-semibold text-(--brand)">
+                  Explorar elementos
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+              </Link>
+              <Link
+                href="/estudio/calculadora"
+                className="group flex flex-col rounded-2xl border border-ink/10 bg-white/50 p-6 transition hover:-translate-y-1 hover:border-(--brand) hover:shadow-[0_22px_45px_-28px_rgba(27,23,16,0.55)]"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-(--brand) text-paper transition group-hover:scale-105">
+                  <Calculator className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <h3 className="mt-4 font-display text-xl font-semibold">
+                  Calculadora de masa molar
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">
+                  Escribe H2SO4, Ca(OH)2 o CuSO4·5H2O y obtén la masa molar,
+                  la composición porcentual y el conversor gramos ↔ moles ↔
+                  partículas.
+                </p>
+                <span className="mt-5 inline-flex items-center gap-1.5 border-t border-ink/10 pt-4 text-sm font-semibold text-(--brand)">
+                  Calcular ahora
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+              </Link>
+              <Link
+                href="/estudio/quiz"
+                className="group flex flex-col rounded-2xl border border-ink/10 bg-white/50 p-6 transition hover:-translate-y-1 hover:border-(--brand) hover:shadow-[0_22px_45px_-28px_rgba(27,23,16,0.55)]"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-(--brand) text-paper transition group-hover:scale-105">
+                  <GraduationCap className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <h3 className="mt-4 font-display text-xl font-semibold">
+                  Quiz de práctica
+                </h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">
+                  Rondas de 10 preguntas sobre símbolos, números atómicos y
+                  familias. Corrección instantánea y repaso de tus fallos.
+                </p>
+                <span className="mt-5 inline-flex items-center gap-1.5 border-t border-ink/10 pt-4 text-sm font-semibold text-(--brand)">
+                  Ponerte a prueba
+                  <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden="true" />
+                </span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
         {/* ── Simulaciones de compuestos (3D nativo + Google Sites) ── */}
         <section
           id="simulaciones"
@@ -554,7 +640,7 @@ export default async function PublicHomePage() {
             <div className="flex items-end justify-between border-b border-paper/25 pb-4">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                  03
+                04
                 </p>
                 <h2 id="simulaciones-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionSimulationsTitle}
@@ -580,7 +666,7 @@ export default async function PublicHomePage() {
             <div className="flex items-end justify-between border-b border-paper/25 pb-4">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                  04
+                05
                 </p>
                 <h2 id="avisos-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionAnnouncementsTitle}
@@ -660,7 +746,7 @@ export default async function PublicHomePage() {
             <div className="grid grid-cols-1 gap-10 border-b-2 border-ink pb-4 md:grid-cols-[1fr_2fr]">
               <div>
                 <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                  05
+                06
                 </p>
                 <h2 id="docente-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                   {sectionAboutTitle}
@@ -736,7 +822,7 @@ export default async function PublicHomePage() {
           <div className="grid grid-cols-1 gap-10 md:grid-cols-[1fr_1.4fr]">
             <div>
               <p className="font-mono text-[11px] tracking-[0.3em] text-(--brand-2)">
-                05
+                07
               </p>
               <h2 id="consultas-h" className="mt-2 font-display text-3xl font-semibold sm:text-4xl">
                 {sectionContactTitle}

@@ -4,7 +4,7 @@ import { ArrowUpRight, FlaskConical, LogIn } from "lucide-react";
 import { MobileMenu } from "@/components/public/mobile-menu";
 import type { ProfessorProfile, User } from "@/db/schema";
 
-export type PublicNavSection = "inicio" | "asignaturas" | "agenda";
+export type PublicNavSection = "inicio" | "asignaturas" | "agenda" | "estudio";
 
 /** Variables de marca (colores institucionales de site_settings). */
 export function brandVars(settings: Record<string, string>): CSSProperties {
@@ -22,6 +22,7 @@ const NAV_LINKS: Array<{
   { id: "inicio", href: "/", label: "Inicio" },
   { id: "asignaturas", href: "/asignaturas", label: "Asignaturas" },
   { id: "agenda", href: "/agenda", label: "Agenda" },
+  { id: "estudio", href: "/estudio", label: "Estudio" },
 ];
 
 type ProfessorInfo = (ProfessorProfile & { user: User }) | undefined;
@@ -128,7 +129,9 @@ export function PublicFooter({
     { href: "/", label: "Inicio" },
     { href: "/asignaturas", label: "Asignaturas" },
     { href: "/agenda", label: "Agenda" },
-    { href: "/#simulaciones", label: "Simulaciones" },
+    { href: "/estudio", label: "Centro de estudio" },
+    { href: "/estudio/tabla-periodica", label: "Tabla periódica" },
+    { href: "/estudio/quiz", label: "Quiz de práctica" },
     { href: "/#avisos", label: "Avisos" },
     { href: "/#consultas", label: "Consulta directa" },
   ];

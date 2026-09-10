@@ -7,6 +7,8 @@ import {
   ExternalLink,
   Globe2,
   Info,
+  Loader2,
+  MonitorPlay,
   MousePointer2,
   Sigma,
 } from "lucide-react";
@@ -118,41 +120,88 @@ export function SimulationsSection({
         </div>
       </div>
 
-      {/* Conector opcional a Google Sites */}
-      {embedUrl ? (
-        <div className="mt-10">
-          <div className="flex items-end justify-between border-b border-paper/20 pb-3">
-            <h3 className="flex items-center gap-2.5 font-display text-2xl font-semibold">
-              <Globe2 className="h-5 w-5 text-(--brand-2)" aria-hidden="true" />
-              {embedTitle}
-            </h3>
-            <a
-              href={embedUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-paper/60 transition hover:text-(--brand-2)"
-            >
-              Abrir en pestaña nueva
-              <ExternalLink className="h-3 w-3" aria-hidden="true" />
-            </a>
-          </div>
-          <div className="mt-5 overflow-hidden rounded-3xl border border-paper/15 bg-paper/5">
-            <iframe
-              src={embedUrl}
-              title={embedTitle}
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              sandbox="allow-scripts allow-same-origin allow-popups"
-              className="aspect-video w-full bg-paper"
-              allowFullScreen
-            />
-          </div>
-          <p className="mt-3 flex items-center gap-1.5 text-[11px] text-paper/45">
-            <Sigma className="h-3 w-3" aria-hidden="true" />
-            Simulaciones externas publicadas por el docente en Google Sites.
+      {/* Conector opcional a Google Sites (carga diferida por privacidad) */}
+      {embedUrl ? <GoogleSitesEmbed url={embedUrl} title={embedTitle} /> : null}
+    </div>
+  );
+}
+
+/**
+ * Embebido de Google Sites con carga diferida: el iframe solo se monta
+ * cuando el estudiante lo pide (privacidad + rendimiento), con estado de
+ * carga accesible y alternativa de apertura en pestaña nueva.
+ */
+function GoogleSitesEmbed({ url, title }: { url: string; title: string }) {
+  const [state, setState] = useState<"idle" | "loading" | "ready">("idle");
+
+  return (
+    <div className="mt-10">
+      <div className="flex items-end justify-between gap-4 border-b border-paper/20 pb-3">
+        <h3 className="flex items-center gap-2.5 font-display text-2xl font-semibold">
+          <Globe2 className="h-5 w-5 text-(--brand-2)" aria-hidden="true" />
+          {title}
+        </h3>
+        <a
+          href={url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex shrink-0 items-center gap-1.5 text-xs text-paper/60 transition hover:text-(--brand-2)"
+        >
+          Abrir en pestaña nueva
+          <ExternalLink className="h-3 w-3" aria-hidden="true" />
+        </a>
+      </div>
+
+      {state === "idle" ? (
+        <div className="relative mt-5 flex aspect-video flex-col items-center justify-center overflow-hidden rounded-3xl border border-dashed border-paper/25 bg-gradient-to-b from-paper/[0.04] to-transparent p-6 text-center">
+          <span className="flex h-14 w-14 items-center justify-center rounded-full border border-(--brand-2)/30 bg-(--brand-2)/10 text-(--brand-2)">
+            <MonitorPlay className="h-6 w-6" aria-hidden="true" />
+          </span>
+          <p className="mt-4 max-w-md text-sm leading-relaxed text-paper/70">
+            Esta simulación se reproduce desde{" "}
+            <strong className="font-medium text-paper">Google Sites</strong>.
+            Al cargarla, tu navegador conectará con los servidores de Google.
+          </p>
+          <button
+            type="button"
+            onClick={() => setState("loading")}
+            className="touch-target mt-5 inline-flex items-center gap-2 rounded-full bg-(--brand-2) px-6 py-3 text-sm font-semibold text-night transition hover:brightness-110 active:scale-[0.98]"
+          >
+            <MonitorPlay className="h-4 w-4" aria-hidden="true" />
+            Cargar simulación
+          </button>
+          <p className="mt-3 text-[11px] text-paper/45">
+            También puedes abrirla directamente en una pestaña nueva.
           </p>
         </div>
-      ) : null}
+      ) : (
+        <div className="relative mt-5 overflow-hidden rounded-3xl border border-paper/15 bg-paper/5">
+          {state === "loading" ? (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 bg-night/80 text-paper/70 backdrop-blur-sm">
+              <Loader2 className="h-6 w-6 animate-spin text-(--brand-2)" aria-hidden="true" />
+              <p className="font-mono text-[10px] uppercase tracking-[0.25em]">
+                Conectando con Google Sites…
+              </p>
+            </div>
+          ) : null}
+          <iframe
+            src={url}
+            title={title}
+            loading="lazy"
+            referrerPolicy="no-referrer"
+            sandbox="allow-scripts allow-same-origin allow-popups"
+            className="aspect-video w-full bg-paper"
+            allowFullScreen
+            onLoad={() => setState("ready")}
+          />
+        </div>
+      )}
+
+      <p className="mt-3 flex items-center gap-1.5 text-[11px] text-paper/45">
+        <Sigma className="h-3 w-3" aria-hidden="true" />
+        Simulaciones externas publicadas por el docente en Google Sites. Si no
+        carga, ábrela en una pestaña nueva.
+      </p>
     </div>
   );
 }

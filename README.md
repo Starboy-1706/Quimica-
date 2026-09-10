@@ -355,3 +355,55 @@ despliegue: `drizzle-kit migrate`, `tsx src/db/seed.ts`, `npm run build`
 y la suite `PLAYWRIGHT_BASE_URL=<url> npx playwright test` contra
 producción. Recuerda hacer `git push` de cualquier cambio: los Codespaces
 se pausan por inactividad y se eliminan tras el periodo de retención.
+
+---
+
+## 10. Centro de estudio interactivo (fase 5)
+
+Cuatro rutas públicas nuevas bajo `/estudio`, sin autenticación y sin
+base de datos: todo el cómputo ocurre en el navegador del estudiante a
+partir de la base local de los 118 elementos (`src/lib/chemistry/elements.ts`).
+
+| Ruta | Herramienta | Detalle |
+| ---- | ----------- | ------- |
+| /estudio | Hub | Tarjetas de acceso, constantes de referencia (Nₐ, R, Vm, F…) y glosario de las 10 familias de la tabla. |
+| /estudio/tabla-periodica | Tabla periódica interactiva | Los 118 elementos con masa atómica IUPAC, configuración electrónica (notación gas noble), electronegatividad de Pauling, familia y dato curioso. Búsqueda por nombre/símbolo/Z, filtro por familia, navegación con flechas de teclado y ficha accesible (`aria-live`). |
+| /estudio/calculadora | Masa molar + conversor | Analizador propio (`src/lib/chemistry/formula.ts`): paréntesis anidados, corchetes/llaves, hidratos «·»/«*» y errores didácticos (sugiere `Co` si escribes `co`). Desglose porcentual por elemento y conversor gramos ↔ moles ↔ partículas con la constante de Avogadro exacta (SI 2019). |
+| /estudio/quiz | Práctica | Rondas de 10 preguntas generadas al vuelo (símbolos, nombres, Z y familias) con distractores verosímiles (misma familia o vecinos en Z), corrección instantánea, repaso de fallos y dos niveles (habituales / los 118). |
+
+Notas de implementación:
+
+- Componentes cliente en `src/components/public/`: `periodic-table.tsx`,
+  `molar-calculator.tsx` y `quiz.tsx`. Las páginas son Server Components
+  con metadatos, contenido educativo para SEO y `canonical`.
+- La navegación pública suma la sección «Estudio»
+  (`PublicNavSection`), el menú móvil, el pie y el `sitemap.xml`.
+- La portada incorpora la sección **03 · Centro de estudio** y se
+  renumeraron las secciones siguientes (04–07).
+- Sin variables de entorno nuevas ni cambios de esquema: basta desplegar.
+
+### 10.1 Mejoras de acceso, correo y simulaciones (fase 5b)
+
+- **Login rediseñado por completo** (`/admin/login`): atmósfera animada en
+  canvas propio (`src/components/admin/login-atmosphere.tsx`) —burbujas de
+  matraz ascendentes más constelación de átomos enlazados, tintada con el
+  color institucional y respetuosa con `prefers-reduced-motion`—, tarjeta
+  de cristal con entrada escalonada, botón con barrido de luz, sacudida
+  accesible en intento fallido y reenfoque/selección automática de la clave
+  (`animate-shake`, `animate-login-rise` en `globals.css`).
+- **Resend reforzado** (`src/lib/email/resend.ts`):
+  - `reply_to`: la alerta al profesor lleva el correo del estudiante, así
+    que contestar la duda es pulsar «Responder» (sin copiar direcciones).
+  - Confirmación automática al estudiante (`buildStudentConfirmationEmail`),
+    firmada en la bitácora como `confirmacion` junto a `notificacion`.
+  - Envío robusto: timeout de 10 s por intento + **un reintento** con espera
+    ante errores de red, 429 o 5xx (los 4xx no se reintentan: son de clave).
+  - Diagnóstico en Ajustes (`getResendStatus`): origen de la clave (panel o
+    entorno), validez de formato «re_…» y del remitente, con insignias.
+  - Validación en el guardado de ajustes: formato de clave y de remitente.
+- **Google Sites con carga diferida** (`src/components/public/simulations.tsx`):
+  componente `GoogleSitesEmbed` con patrón *click-to-load* —el iframe solo se
+  monta cuando el estudiante lo pide (privacidad + rendimiento)—, estado de
+  carga accesible y alternativa de pestaña nueva. En Ajustes y en el servidor
+  se acepta **pegar el código de inserción `<iframe>` completo** (se extrae
+  la URL automáticamente) y se valida que el host sea `sites.google.com`.
